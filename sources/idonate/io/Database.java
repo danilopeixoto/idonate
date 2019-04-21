@@ -73,7 +73,7 @@ public class Database {
         return false;
     }
     
-    public boolean setHospital(Hospital hospital) throws SQLException {
+    public boolean setHospital(Hospital hospital) {
         return false;
     }
     public Hospital getHospital(String id) {
