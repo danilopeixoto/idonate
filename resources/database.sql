@@ -23,7 +23,7 @@ CREATE TABLE people(
     sex INT NOT NULL,
     weight FLOAT NOT NULL,
     blood_type INT NOT NULL,
-    medical_conditions MULTILINESTRING NOT NULL,
+    medical_conditions TEXT NOT NULL,
     hospital_id VARCHAR(64) NOT NULL,
     PRIMARY KEY (cpf),
     CONSTRAINT fk_person_hospital_id FOREIGN KEY (hospital_id) REFERENCES hospitals(id)
@@ -37,6 +37,7 @@ CREATE TABLE resources(
     description TEXT NOT NULL,
     acceptor_cpf VARCHAR(16) NULL DEFAULT NULL,
     acceptation_date DATE NULL DEFAULT NULL,
+    type INT NOT NULL,
     PRIMARY KEY (id, donor_cpf),
     CONSTRAINT fk_resource_donor_cpf FOREIGN KEY (donor_cpf) REFERENCES people(cpf)
                                                              ON UPDATE CASCADE,
@@ -69,4 +70,6 @@ CREATE TABLE bone_marrows(
     redome VARCHAR(32) NOT NULL,
     PRIMARY KEY (resource_id),
     CONSTRAINT fk_bone_marrow_resource_id FOREIGN KEY (resource_id) REFERENCES resources(id)
+																	ON DELETE CASCADE
+                                                                    ON UPDATE CASCADE
 );

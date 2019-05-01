@@ -26,49 +26,51 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.util;
+package idonate.model;
 
 import java.sql.Date;
 
-enum OrganType {
-    Heart,
-    Lungs,
-    Liver,
-    Kidneys,
-    Pancreas,
-    Intestine,
-    Skin,
-    Bone,
-    Cornea,
-    Vein,
-    Tendon
-}
-
-public class Organ extends Resource {
-    private OrganType type;
-    private float weight;
+public class Blood extends Resource {
+    public enum BloodType {
+        None,
+        APlus,
+        BPlus,
+        OPlus,
+        ABPlus,
+        AMinus,
+        BMinus,
+        OMinus,
+        ABMinus
+    }
     
-    public Organ() {}
-    public Organ(
+    private BloodType bloodType;
+    private float volume;
+    
+    public Blood() {
+        super(ResourceType.Blood);
+    }
+    public Blood(
             int id, String donorCPF, Date donationDate, String description,
-            OrganType type, float weight,
+            BloodType bloodType, float volume,
             String acceptorCPF, Date acceptationDate) {
-        super(id, donorCPF, donationDate, description, acceptorCPF, acceptationDate);
-        this.type = type;
-        this.weight = weight;
+        super(id, donorCPF, donationDate, description,
+                acceptorCPF, acceptationDate, ResourceType.Blood);
+        
+        this.bloodType = bloodType;
+        this.volume = volume;
     }
 
-    public void setType(OrganType type) {
-        this.type = type;
+    public void setBloodType(BloodType bloodType) {
+        this.bloodType = bloodType;
     }
-    public void setWeight(float weight) {
-        this.weight = weight;
+    public void setVolume(float volume) {
+        this.volume = volume;
     }
 
-    public OrganType getType() {
-        return type;
+    public BloodType getBloodType() {
+        return bloodType;
     }
-    public float getWeight() {
-        return weight;
+    public float getVolume() {
+        return volume;
     }
 }

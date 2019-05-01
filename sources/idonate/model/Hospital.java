@@ -26,65 +26,63 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.util;
+package idonate.model;
 
-import java.sql.Date;
-
-public abstract class Resource {
-    private int id;
-    private String donorCPF;
-    private Date donationDate;
-    private String description;
-    private String acceptorCPF;
-    private Date acceptationDate;
+public class Hospital {
+    private String id;
+    private String password;
+    private String name;
+    private String address;
+    private String phone;
+    private String email;
     
-    public Resource() {}
-    public Resource(
-            int id, String donorCPF, Date donationDate, String description,
-            String acceptorCPF, Date acceptationDate) {
+    public Hospital() {}
+    public Hospital(
+            String id, String password, String name,
+            String address, String phone, String email) {
         this.id = id;
-        this.donorCPF = donorCPF;
-        this.donationDate = donationDate;
-        this.description = description;
-        this.acceptorCPF = donorCPF;
-        this.acceptationDate = donationDate;
+        this.password = password;
+        this.name = name;
+        this.address = address;
+        this.phone = phone;
+        this.email = email;
+    }
+    
+    public void setID(String id) {
+        this.id = id;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public void setID(int id) {
-        this.id = id;
-    }
-    public void setDonorCPF(String donorCPF) {
-        this.donorCPF = donorCPF;
-    }
-    public void setDonationDate(Date donationDate) {
-        this.donationDate = donationDate;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
-    public void setAcceptorCPF(String acceptorCPF) {
-        this.acceptorCPF = acceptorCPF;
-    }
-    public void setAcceptationDate(Date acceptationDate) {
-        this.acceptationDate = acceptationDate;
-    }
-
-    public int getID() {
+    public String getID() {
         return id;
     }
-    public String getDonorCPF() {
-        return donorCPF;
+    public String getPassword() {
+        return password;
     }
-    public Date getDonationDate() {
-        return donationDate;
+    public String getName() {
+        return name;
     }
-    public String getDescription() {
-        return description;
+    public String getAddress() {
+        return address;
     }
-    public String getAcceptorCPF() {
-        return acceptorCPF;
+    public String getPhone() {
+        return phone;
     }
-    public Date getAcceptationDate() {
-        return acceptationDate;
+    public String getEmail() {
+        return email;
     }
 }

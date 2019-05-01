@@ -26,35 +26,54 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.util;
+package idonate.model;
 
 import java.sql.Date;
 
-public class BoneMarrow extends Resource {
-    private String hla;
-    private String redome;
+public class Organ extends Resource {
+    public enum OrganType {
+        None,
+        Heart,
+        Lungs,
+        Liver,
+        Kidneys,
+        Pancreas,
+        Intestine,
+        Skin,
+        Bone,
+        Cornea,
+        Vein,
+        Tendon
+    }
     
-    public BoneMarrow() {}
-    public BoneMarrow(
+    private OrganType organType;
+    private float weight;
+    
+    public Organ() {
+        super(ResourceType.Organ);
+    }
+    public Organ(
             int id, String donorCPF, Date donationDate, String description,
-            String hla, String redome,
+            OrganType organType, float weight,
             String acceptorCPF, Date acceptationDate) {
-        super(id, donorCPF, donationDate, description, acceptorCPF, acceptationDate);
-        this.hla = hla;
-        this.redome = redome;
+        super(id, donorCPF, donationDate, description,
+                acceptorCPF, acceptationDate, ResourceType.Organ);
+        
+        this.organType = organType;
+        this.weight = weight;
     }
 
-    public void setHLA(String hla) {
-        this.hla = hla;
+    public void setType(OrganType organType) {
+        this.organType = organType;
     }
-    public void setREDOME(String redome) {
-        this.redome = redome;
+    public void setWeight(float weight) {
+        this.weight = weight;
     }
 
-    public String getHLA() {
-        return hla;
+    public OrganType getOrganType() {
+        return organType;
     }
-    public String getREDOME() {
-        return redome;
+    public float getWeight() {
+        return weight;
     }
 }

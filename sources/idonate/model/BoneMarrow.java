@@ -26,46 +26,39 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.util;
+package idonate.model;
 
 import java.sql.Date;
 
-enum BloodType {
-    APlus,
-    BPlus,
-    OPlus,
-    ABPlus,
-    AMinus,
-    BMinus,
-    OMinus,
-    ABMinus
-}
-
-public class Blood extends Resource {
-    private BloodType type;
-    private float volume;
+public class BoneMarrow extends Resource {
+    private String hla;
+    private String redome;
     
-    public Blood() {}
-    public Blood(
+    public BoneMarrow() {
+        super(ResourceType.BoneMarrow);
+    }
+    public BoneMarrow(
             int id, String donorCPF, Date donationDate, String description,
-            BloodType type, float volume,
+            String hla, String redome,
             String acceptorCPF, Date acceptationDate) {
-        super(id, donorCPF, donationDate, description, acceptorCPF, acceptationDate);
-        this.type = type;
-        this.volume = volume;
+        super(id, donorCPF, donationDate, description,
+                acceptorCPF, acceptationDate, ResourceType.BoneMarrow);
+        
+        this.hla = hla;
+        this.redome = redome;
     }
 
-    public void setType(BloodType type) {
-        this.type = type;
+    public void setHLA(String hla) {
+        this.hla = hla;
     }
-    public void setVolume(float volume) {
-        this.volume = volume;
+    public void setREDOME(String redome) {
+        this.redome = redome;
     }
 
-    public BloodType getType() {
-        return type;
+    public String getHLA() {
+        return hla;
     }
-    public float getVolume() {
-        return volume;
+    public String getREDOME() {
+        return redome;
     }
 }

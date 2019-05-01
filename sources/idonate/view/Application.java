@@ -26,44 +26,27 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.ui;
+package idonate.view;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import idonate.controller.Database;
+import idonate.model.Hospital;
 
-public class ApplicationTest {
-    public ApplicationTest() {}
-    
-    @BeforeClass
-    public static void setUpClass() {}
-    
-    @AfterClass
-    public static void tearDownClass() {}
-    
-    @Before
-    public void setUp() {}
-    
-    @After
-    public void tearDown() {}
-    
-    @Test
-    public void testAdd() {
-        System.out.println("add");
-        int a = 0;
-        int b = 0;
-        int expResult = 0;
-        int result = Application.add(a, b);
-        assertEquals(expResult, result);
+public class Application {
+    public static int add(int a, int b) {
+        return a + b;
     }
-
-    @Test
-    public void testMain() {
-        System.out.println("main");
-        String[] arguments = null;
-        Application.main(arguments);
+    
+    public static void main(String[] arguments) {
+        /*Database database = new Database("root", "12345", "idonate");
+        
+        try {
+            database.connect();
+            Hospital hospital = new Hospital("hospitalID", "adffkjd", "HOSPITLA", "someAdrress", "2394732879", "danilo@jkhdhf");
+            
+            database.addHospital(hospital);
+        }
+        catch (Exception exception) {
+            exception.printStackTrace();
+        }*/
     }
 }

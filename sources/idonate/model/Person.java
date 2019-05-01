@@ -26,16 +26,17 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package idonate.util;
+package idonate.model;
 
-import java.util.ArrayList;
-
-enum Sex {
-    Female,
-    Male
-}
+import idonate.model.Blood.BloodType;
 
 public class Person {
+    public enum Sex {
+        None,
+        Female,
+        Male
+    }
+    
     private String cpf;
     private String name;
     private String address;
@@ -45,14 +46,14 @@ public class Person {
     private Sex sex;
     private float weight;
     private BloodType bloodType;
-    private ArrayList<String> medicalConditions;
-    private int hospitalID;
+    private String medicalConditions;
+    private String hospitalID;
     
     public Person() {}
     public Person(
             String cpf, String name, String address, String phone, String email,
             int age, Sex sex, float weight, BloodType bloodType,
-            ArrayList<String> medicalConditions, int hospitalID) {
+            String medicalConditions, String hospitalID) {
         this.cpf = cpf;
         this.name = name;
         this.address = address;
@@ -93,10 +94,10 @@ public class Person {
     public void setBloodType(BloodType bloodType) {
         this.bloodType = bloodType;
     }
-    public void setMedicalConditions(ArrayList<String> medicalConditions) {
+    public void setMedicalConditions(String medicalConditions) {
         this.medicalConditions = medicalConditions;
     }
-    public void setHospitalID(int hospitalID) {
+    public void setHospitalID(String hospitalID) {
         this.hospitalID = hospitalID;
     }
     
@@ -127,10 +128,10 @@ public class Person {
     public BloodType getBloodType() {
         return bloodType;
     }
-    public ArrayList<String> getMedicalConditions() {
+    public String getMedicalConditions() {
         return medicalConditions;
     }
-    public int getHospitalID() {
+    public String getHospitalID() {
         return hospitalID;
     }
 }
