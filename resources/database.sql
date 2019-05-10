@@ -45,7 +45,7 @@ CREATE TABLE resources(
 );
 
 CREATE TABLE organs(
-    resource_id INT NOT NULL AUTO_INCREMENT,
+    resource_id INT NOT NULL,
     type INT NOT NULL,
     weight FLOAT NOT NULL,
     PRIMARY KEY (resource_id),
@@ -55,7 +55,7 @@ CREATE TABLE organs(
 );
 
 CREATE TABLE bloods(
-    resource_id INT NOT NULL AUTO_INCREMENT,
+    resource_id INT NOT NULL,
     type INT NOT NULL,
     volume FLOAT NOT NULL,
     PRIMARY KEY (resource_id),
@@ -65,11 +65,11 @@ CREATE TABLE bloods(
 );
 
 CREATE TABLE bone_marrows(
-    resource_id INT NOT NULL AUTO_INCREMENT,
+    resource_id INT NOT NULL,
     hla VARCHAR(32) NOT NULL,
     redome VARCHAR(32) NOT NULL,
     PRIMARY KEY (resource_id),
     CONSTRAINT fk_bone_marrow_resource_id FOREIGN KEY (resource_id) REFERENCES resources(id)
-																	ON DELETE CASCADE
+                                                                    ON DELETE CASCADE
                                                                     ON UPDATE CASCADE
 );

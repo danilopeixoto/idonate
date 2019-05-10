@@ -38,13 +38,13 @@ public abstract class Resource {
         BoneMarrow
     }
     
-    private int id;
-    private String donorCPF;
-    private Date donationDate;
-    private String description;
-    private String acceptorCPF;
-    private Date acceptationDate;
-    private ResourceType type;
+    protected int id;
+    protected String donorCPF;
+    protected Date donationDate;
+    protected String description;
+    protected String acceptorCPF;
+    protected Date acceptationDate;
+    protected ResourceType type;
     
     public Resource(ResourceType type) {
         this.type = type;

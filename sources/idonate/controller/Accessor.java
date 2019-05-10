@@ -28,56 +28,17 @@
 
 package idonate.controller;
 
-import idonate.model.Person;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import java.sql.Statement;
 
-public class DatabaseTest {
-    public DatabaseTest() {}
+public abstract class Accessor {
+    protected Database database;
+    protected Statement statement;
     
-    @BeforeClass
-    public static void setUpClass() {}
-    
-    @AfterClass
-    public static void tearDownClass() {}
-    
-    @Before
-    public void setUp() {}
-    
-    @After
-    public void tearDown() {}
-    
-    @Test
-    public void testHasHospital() throws Exception {
-        System.out.println("hasHospital");
-        String id = "";
-        Database instance = null;
-        boolean expResult = false;
-        boolean result = instance.hasHospital(id);
-        assertEquals(expResult, result);
+    public Accessor(Database database) {
+        this.database = database;
     }
     
-    @Test
-    public void testAddPerson() throws Exception {
-        System.out.println("addPerson");
-        Person person = null;
-        Database instance = null;
-        boolean expResult = false;
-        boolean result = instance.addPerson(person);
-        assertEquals(expResult, result);
-    }
-    
-    @Test
-    public void testGetPerson() throws Exception {
-        System.out.println("getPerson");
-        String cpf = "";
-        Database instance = null;
-        Person expResult = null;
-        Person result = instance.getPerson(cpf);
-        assertEquals(expResult, result);
+    public Database getDatabase() {
+        return database;
     }
 }

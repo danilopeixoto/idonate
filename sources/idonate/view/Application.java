@@ -29,24 +29,9 @@
 package idonate.view;
 
 import idonate.controller.Database;
-import idonate.model.Hospital;
 
 public class Application {
-    public static int add(int a, int b) {
-        return a + b;
-    }
-    
     public static void main(String[] arguments) {
-        /*Database database = new Database("root", "12345", "idonate");
-        
-        try {
-            database.connect();
-            Hospital hospital = new Hospital("hospitalID", "adffkjd", "HOSPITLA", "someAdrress", "2394732879", "danilo@jkhdhf");
-            
-            database.addHospital(hospital);
-        }
-        catch (Exception exception) {
-            exception.printStackTrace();
-        }*/
+        Database database = new Database("root", "12345", "idonate");
     }
 }
