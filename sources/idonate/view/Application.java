@@ -33,5 +33,6 @@ import idonate.controller.Database;
 public class Application {
     public static void main(String[] arguments) {
         Database database = new Database("root", "12345", "idonate");
+        ReCaptchaConfirmation.main(arguments);
     }
 }
