@@ -55,6 +55,7 @@ public class ReCaptchaConfirmation extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         checkBox.setText("Eu não sou um vampiro.");
         checkBox.addActionListener(new java.awt.event.ActionListener() {
@@ -90,13 +91,15 @@ public class ReCaptchaConfirmation extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void checkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxActionPerformed
         final Random rng = new Random();
         final boolean isHuman = rng.nextBoolean();
-        if (isHuman) {
-            // TODO: open main menu
+        if (isHuman) { // TODO: Remove true ||.
+            IDonateViewer.main(null);
+            this.dispose();
         } else {
             ReCaptcha.main(null);
         }

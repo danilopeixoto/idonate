@@ -27,6 +27,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package idonate.view;
 
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -81,7 +82,7 @@ public class ReCaptcha extends javax.swing.JFrame {
         this.initComponents();
         this.makeRecaptcha();
     }
-    
+
     public void checkSolution() {
         for (final FigureStatus fs : this.figureStatus) {
             switch (fs) {
@@ -89,33 +90,33 @@ public class ReCaptcha extends javax.swing.JFrame {
                 case IS_SOLUTION_CLICKED:
                     break;
                 default:
-                    System.out.println("Wrong!");
                     return;
             }
         }
         
-        System.out.println("Right!");
+        IDonateViewer.main(null);
+        this.dispose();
     }
-    
+
     public void clickOnFigure(final int index) {
         this.figureStatus[index] = this.figureStatus[index].toggleClick();
     }
-    
+
     private ReFigure[] loadRecaptchaFigures() throws IOException {
         final Random rng = new Random();
         final String dir = "C:\\recaptcha\\";
         final Stream<Path> dirs = Files.list(new File(dir).toPath());
         final String dirNumber = Integer.toString(rng.nextInt((int)dirs.count()));
-        
+
         int i = 0;
         final ReFigure[] figures = new ReFigure[this.size * this.size];
         for (final File file : new File(dir + dirNumber).listFiles()) {
             figures[i++] = new ReFigure(file);
         }
-        
+
         return figures;
     }
-    
+
     private void makeRecaptcha() throws IOException {
         this.recaptchaPanel.setLayout(new GridLayout(this.size, this.size));
         
@@ -129,16 +130,32 @@ public class ReCaptcha extends javax.swing.JFrame {
             } else {
                 this.figureStatus[i] = FigureStatus.IS_NOT_SOLUTION_UNCLICKED;
             }
-            
+
             final JLabel label = new JLabel(figure);
             label.addMouseListener(new MouseAdapter() {
                 @Override
-                public void mouseClicked(MouseEvent e) {
+                public void mouseClicked(final MouseEvent e) {
+                    final Dimension d = label.getSize();
+                    
+                    switch (figureStatus[index]) {
+                        case IS_NOT_SOLUTION_UNCLICKED:
+                        case IS_SOLUTION_UNCLICKED:
+                            label.setSize(
+                                    d.width * 8 / 10,
+                                    d.height * 8 / 10);
+                            break;
+                        default:
+                            label.setSize(
+                                    d.width * 10 / 8,
+                                    d.height * 10 / 8);
+                            break;
+                    }
+
                     clickOnFigure(index);
                     checkSolution();
                 }
             });
-            
+
             this.recaptchaPanel.add(label);
         }
     }

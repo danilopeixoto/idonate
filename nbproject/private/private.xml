@@ -2,6 +2,13 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group/>
+        <group>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/model/Person.java</file>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/view/PersonEditor.java</file>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/view/ReCaptchaConfirmation.java</file>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/view/ReCaptcha.java</file>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/view/IDonateViewer.java</file>
+            <file>file:/C:/Users/Heitor/Downloads/idonate/sources/idonate/view/ResourceEditor.java</file>
+        </group>
     </open-files>
 </project-private>
