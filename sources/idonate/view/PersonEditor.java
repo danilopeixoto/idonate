@@ -27,8 +27,9 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package idonate.view;
 
-import java.awt.Image;
-import javax.swing.ImageIcon;
+import java.text.ParseException;
+import javax.swing.text.DefaultFormatterFactory;
+import javax.swing.text.MaskFormatter;
 
 /**
  *
@@ -38,11 +39,24 @@ public class PersonEditor extends javax.swing.JFrame {
     /**
      * Creates new form PersonEditor
      */
-    public PersonEditor() {
+    public PersonEditor(){
         this.initComponents();
         
-        final ImageIcon icon = (ImageIcon)this.labelIcon.getIcon();
-        this.labelIcon.setIcon(new ImageIcon(icon.getImage().getScaledInstance(64, 64, Image.SCALE_DEFAULT)));
+        try {
+            MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
+            cpfMask.setPlaceholderCharacter('0');
+        
+            formattedTextFieldCPF.setFormatterFactory(
+                    new DefaultFormatterFactory(cpfMask));
+            
+            MaskFormatter phoneMask = new MaskFormatter("(##) #####-####");
+            phoneMask.setPlaceholderCharacter('0');
+            
+            formattedTextFieldPhone.setFormatterFactory(
+                    new DefaultFormatterFactory(phoneMask));
+        } catch (ParseException exception) {
+            exception.printStackTrace();
+        }
     }
 
     /**
@@ -55,49 +69,60 @@ public class PersonEditor extends javax.swing.JFrame {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        buttonGroupSex = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         labelIcon = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jPanel4 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
-        jTextField8 = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
-        jTextField9 = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
-        jTextField10 = new javax.swing.JTextField();
+        formattedTextFieldCPF = new javax.swing.JFormattedTextField();
+        textFieldName = new javax.swing.JTextField();
+        textFieldAddress = new javax.swing.JTextField();
+        formattedTextFieldPhone = new javax.swing.JFormattedTextField();
+        textFieldEmail = new javax.swing.JTextField();
+        spinnerAge = new javax.swing.JSpinner();
+        jPanel6 = new javax.swing.JPanel();
+        radioButtonMale = new javax.swing.JRadioButton();
+        radioButtonFemale = new javax.swing.JRadioButton();
+        spinnerMass = new javax.swing.JSpinner();
+        comboBoxBloodType = new javax.swing.JComboBox<>();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        textAreaMedicalConditions = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
-        jPanel2 = new javax.swing.JPanel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listResources = new javax.swing.JList<>();
+        jPanel7 = new javax.swing.JPanel();
         buttonAdd = new javax.swing.JButton();
         buttonEdit = new javax.swing.JButton();
         buttonRemove = new javax.swing.JButton();
-        jPanel4 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
+        jPanel2 = new javax.swing.JPanel();
+        buttonDone = new javax.swing.JButton();
+        buttonCancel = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("iDonate");
         setResizable(false);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        labelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/idonate/view/plus-sign.png"))); // NOI18N
-        labelIcon.setPreferredSize(new java.awt.Dimension(64, 64));
+        labelIcon.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/plus.png"))); // NOI18N
+        labelIcon.setMaximumSize(new java.awt.Dimension(300, 300));
+        labelIcon.setMinimumSize(new java.awt.Dimension(300, 300));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(labelIcon, gridBagConstraints);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -105,192 +130,271 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel1.add(jLabel1, gridBagConstraints);
+
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        jPanel4.setLayout(new javax.swing.BoxLayout(jPanel4, javax.swing.BoxLayout.Y_AXIS));
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel3.setText("CPF");
         jLabel3.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel3.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel3.setPreferredSize(new java.awt.Dimension(100, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
-        jPanel5.add(jLabel3, gridBagConstraints);
-
-        jTextField1.setMinimumSize(new java.awt.Dimension(20, 26));
-        jTextField1.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField1, gridBagConstraints);
+        jLabel3.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel3.setPreferredSize(new java.awt.Dimension(120, 26));
+        jPanel5.add(jLabel3, new java.awt.GridBagConstraints());
 
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel2.setText("Nome");
         jLabel2.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel2.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel2.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel2.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel2.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel2, gridBagConstraints);
-
-        jTextField2.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField2, gridBagConstraints);
 
         jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel4.setText("Endereço");
         jLabel4.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel4.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel4.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel4.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel4.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel4, gridBagConstraints);
-
-        jTextField3.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField3, gridBagConstraints);
 
         jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel5.setText("Telefone");
         jLabel5.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel5.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel5.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel5.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel5.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel5, gridBagConstraints);
-
-        jTextField4.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField4, gridBagConstraints);
 
         jLabel6.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel6.setText("E-Mail");
         jLabel6.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel6.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel6.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel6.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel6.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel6, gridBagConstraints);
-
-        jTextField5.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField5, gridBagConstraints);
 
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel7.setText("Idade");
         jLabel7.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel7.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel7.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel7.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel7.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel7, gridBagConstraints);
 
-        jTextField6.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField6, gridBagConstraints);
-
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("Gênero");
+        jLabel8.setText("Sexo");
         jLabel8.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel8.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel8.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel8.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel8.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel8, gridBagConstraints);
-
-        jTextField7.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 6;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField7, gridBagConstraints);
 
         jLabel9.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel9.setText("Massa");
         jLabel9.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel9.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel9.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel9.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel9.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel9, gridBagConstraints);
-
-        jTextField8.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField8, gridBagConstraints);
 
         jLabel10.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel10.setText("Tipo Sanguíneo");
         jLabel10.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel10.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel10.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel10.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel10.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel10, gridBagConstraints);
-
-        jTextField9.setPreferredSize(new java.awt.Dimension(270, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 8;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField9, gridBagConstraints);
 
         jLabel11.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jLabel11.setText("Condições Médicas");
         jLabel11.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel11.setMinimumSize(new java.awt.Dimension(20, 14));
-        jLabel11.setPreferredSize(new java.awt.Dimension(100, 26));
+        jLabel11.setMinimumSize(new java.awt.Dimension(150, 14));
+        jLabel11.setPreferredSize(new java.awt.Dimension(120, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(jLabel11, gridBagConstraints);
 
-        jTextField10.setPreferredSize(new java.awt.Dimension(270, 26));
+        formattedTextFieldCPF.setPreferredSize(new java.awt.Dimension(250, 26));
+        formattedTextFieldCPF.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formattedTextFieldCPFActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(formattedTextFieldCPF, gridBagConstraints);
+
+        textFieldName.setPreferredSize(new java.awt.Dimension(250, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(textFieldName, gridBagConstraints);
+
+        textFieldAddress.setPreferredSize(new java.awt.Dimension(250, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(textFieldAddress, gridBagConstraints);
+
+        formattedTextFieldPhone.setPreferredSize(new java.awt.Dimension(250, 26));
+        formattedTextFieldPhone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                formattedTextFieldPhoneActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(formattedTextFieldPhone, gridBagConstraints);
+
+        textFieldEmail.setPreferredSize(new java.awt.Dimension(250, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(textFieldEmail, gridBagConstraints);
+
+        spinnerAge.setModel(new javax.swing.SpinnerNumberModel(0, 0, null, 1));
+        spinnerAge.setPreferredSize(new java.awt.Dimension(250, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(spinnerAge, gridBagConstraints);
+
+        jPanel6.setLayout(new java.awt.GridLayout(1, 0, 40, 0));
+
+        buttonGroupSex.add(radioButtonMale);
+        radioButtonMale.setSelected(true);
+        radioButtonMale.setText("Masculino");
+        radioButtonMale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioButtonMaleActionPerformed(evt);
+            }
+        });
+        jPanel6.add(radioButtonMale);
+
+        buttonGroupSex.add(radioButtonFemale);
+        radioButtonFemale.setText("Feminino");
+        radioButtonFemale.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioButtonFemaleActionPerformed(evt);
+            }
+        });
+        jPanel6.add(radioButtonFemale);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jPanel6, gridBagConstraints);
+
+        spinnerMass.setModel(new javax.swing.SpinnerNumberModel(0.0f, 0.0f, null, 0.01f));
+        spinnerMass.setPreferredSize(new java.awt.Dimension(250, 26));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(spinnerMass, gridBagConstraints);
+
+        comboBoxBloodType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" }));
+        comboBoxBloodType.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboBoxBloodTypeActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 8;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(comboBoxBloodType, gridBagConstraints);
+
+        textAreaMedicalConditions.setColumns(20);
+        textAreaMedicalConditions.setRows(5);
+        jScrollPane2.setViewportView(textAreaMedicalConditions);
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 9;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 0);
-        jPanel5.add(jTextField10, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        jPanel5.add(jScrollPane2, gridBagConstraints);
+
+        jPanel4.add(jPanel5);
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
-        jPanel2.setMinimumSize(new java.awt.Dimension(239, 26));
-        jPanel2.setPreferredSize(new java.awt.Dimension(394, 26));
-        jPanel2.setLayout(new java.awt.GridLayout(1, 0, 10, 10));
+        listResources.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });
+        listResources.setMinimumSize(new java.awt.Dimension(200, 36));
+        listResources.setPreferredSize(new java.awt.Dimension(280, 36));
+        jScrollPane3.setViewportView(listResources);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 5);
+        jPanel3.add(jScrollPane3, gridBagConstraints);
+
+        jPanel7.setLayout(new java.awt.GridLayout(3, 1, 10, 5));
 
         buttonAdd.setText("Adicionar");
         buttonAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -298,70 +402,94 @@ public class PersonEditor extends javax.swing.JFrame {
                 buttonAddActionPerformed(evt);
             }
         });
-        jPanel2.add(buttonAdd);
+        jPanel7.add(buttonAdd);
 
         buttonEdit.setText("Editar");
-        jPanel2.add(buttonEdit);
+        buttonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEditActionPerformed(evt);
+            }
+        });
+        jPanel7.add(buttonEdit);
 
         buttonRemove.setText("Remover");
-        buttonRemove.setPreferredSize(new java.awt.Dimension(73, 5));
-        jPanel2.add(buttonRemove);
+        jPanel7.add(buttonRemove);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(10, 0, 0, 0);
-        jPanel3.add(jPanel2, gridBagConstraints);
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        jPanel3.add(jPanel7, gridBagConstraints);
 
-        jPanel4.setLayout(new java.awt.GridBagLayout());
+        jPanel4.add(jPanel3);
 
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { " " };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+        jScrollPane1.setViewportView(jPanel4);
+
+        jPanel2.setLayout(new java.awt.GridLayout(1, 2, 5, 10));
+
+        buttonDone.setText("Concluir");
+        jPanel2.add(buttonDone);
+
+        buttonCancel.setText("Cancelar");
+        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelActionPerformed(evt);
+            }
         });
-        jList1.setPreferredSize(new java.awt.Dimension(394, 120));
-        jScrollPane1.setViewportView(jList1);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        jPanel4.add(jScrollPane1, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        jPanel3.add(jPanel4, gridBagConstraints);
+        jPanel2.add(buttonCancel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 462, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, 418, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(21, 21, 21)
-                        .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap()
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formattedTextFieldCPFActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formattedTextFieldCPFActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formattedTextFieldCPFActionPerformed
+
+    private void formattedTextFieldPhoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_formattedTextFieldPhoneActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_formattedTextFieldPhoneActionPerformed
+
+    private void radioButtonMaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioButtonMaleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_radioButtonMaleActionPerformed
+
+    private void radioButtonFemaleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioButtonFemaleActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_radioButtonFemaleActionPerformed
+
+    private void comboBoxBloodTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboBoxBloodTypeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboBoxBloodTypeActionPerformed
+
+    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_buttonEditActionPerformed
+
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
         ResourceEditor.main(null);
@@ -405,8 +533,14 @@ public class PersonEditor extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonAdd;
+    private javax.swing.JButton buttonCancel;
+    private javax.swing.JButton buttonDone;
     private javax.swing.JButton buttonEdit;
+    private javax.swing.ButtonGroup buttonGroupSex;
     private javax.swing.JButton buttonRemove;
+    private javax.swing.JComboBox<String> comboBoxBloodType;
+    private javax.swing.JFormattedTextField formattedTextFieldCPF;
+    private javax.swing.JFormattedTextField formattedTextFieldPhone;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -418,23 +552,25 @@ public class PersonEditor extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField10;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
-    private javax.swing.JTextField jTextField8;
-    private javax.swing.JTextField jTextField9;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel labelIcon;
+    private javax.swing.JList<String> listResources;
+    private javax.swing.JRadioButton radioButtonFemale;
+    private javax.swing.JRadioButton radioButtonMale;
+    private javax.swing.JSpinner spinnerAge;
+    private javax.swing.JSpinner spinnerMass;
+    private javax.swing.JTextArea textAreaMedicalConditions;
+    private javax.swing.JTextField textFieldAddress;
+    private javax.swing.JTextField textFieldEmail;
+    private javax.swing.JTextField textFieldName;
     // End of variables declaration//GEN-END:variables
 }

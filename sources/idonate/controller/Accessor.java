@@ -28,10 +28,12 @@
 
 package idonate.controller;
 
+import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public abstract class Accessor {
     protected Database database;
+    protected PreparedStatement preparedStatement;
     protected Statement statement;
     
     public Accessor(Database database) {

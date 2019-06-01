@@ -28,11 +28,23 @@
 
 package idonate.controller;
 
+import com.bulenkov.darcula.DarculaLaf;
 import idonate.controller.Database;
 import idonate.view.ReCaptchaConfirmation;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.basic.BasicLookAndFeel;
 
 public class Application {
     public static void main(String[] arguments) {
+        try {
+            BasicLookAndFeel darcula = new DarculaLaf();
+            UIManager.setLookAndFeel(darcula);
+        }
+        catch(UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+        
         Database database = new Database("root", "12345", "idonate");
         ReCaptchaConfirmation.main(arguments);
     }

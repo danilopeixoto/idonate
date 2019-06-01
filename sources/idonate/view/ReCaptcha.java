@@ -27,6 +27,7 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package idonate.view;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -39,8 +40,10 @@ import java.nio.file.Path;
 import java.util.Random;
 import java.util.stream.Stream;
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
+import javax.swing.border.Border;
 
 /**
  *
@@ -119,7 +122,13 @@ public class ReCaptcha extends javax.swing.JFrame {
     }
 
     private void makeRecaptcha() throws IOException {
+        final Border defaultBorder = BorderFactory.createLineBorder(Color.white, 2);
+        final Border blueBorder = BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.white, 2),
+                BorderFactory.createLineBorder(Color.decode("#00baff"), 4));
+        
         this.recaptchaPanel.setLayout(new GridLayout(this.size, this.size));
+        this.recaptchaPanel.setBorder(defaultBorder);
         
         final ReFigure[] figures = this.loadRecaptchaFigures();
         
@@ -133,22 +142,19 @@ public class ReCaptcha extends javax.swing.JFrame {
             }
 
             final JLabel label = new JLabel(figure);
+            
+            label.setBorder(defaultBorder);
+            
             label.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(final MouseEvent e) {
-                    final Dimension d = label.getSize();
-                    
                     switch (figureStatus[index]) {
                         case IS_NOT_SOLUTION_UNCLICKED:
                         case IS_SOLUTION_UNCLICKED:
-                            label.setSize(
-                                    d.width * 8 / 10,
-                                    d.height * 8 / 10);
+                            label.setBorder(blueBorder);
                             break;
                         default:
-                            label.setSize(
-                                    d.width * 10 / 8,
-                                    d.height * 10 / 8);
+                            label.setBorder(defaultBorder);
                             break;
                     }
 
@@ -169,32 +175,63 @@ public class ReCaptcha extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
+        jPanel2 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        jPanel1 = new javax.swing.JPanel();
         selectAllSquareslabel = new javax.swing.JLabel();
         foodLabel = new javax.swing.JLabel();
         ifNoneLabel = new javax.swing.JLabel();
-        recaptchaPanel = new javax.swing.JPanel();
         skipButton = new javax.swing.JButton();
+        recaptchaPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("iDonate");
+        setResizable(false);
 
-        selectAllSquareslabel.setText("Selecione todos os quadrados com");
+        jPanel2.setLayout(new java.awt.GridBagLayout());
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/resources/icons/attention.png"))); // NOI18N
+        jLabel1.setText("jLabel1");
+        jLabel1.setMaximumSize(new java.awt.Dimension(64, 64));
+        jLabel1.setMinimumSize(new java.awt.Dimension(64, 64));
+        jLabel1.setPreferredSize(new java.awt.Dimension(64, 64));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.insets = new java.awt.Insets(5, 6, 5, 6);
+        jPanel2.add(jLabel1, gridBagConstraints);
+
+        jPanel1.setLayout(new java.awt.GridBagLayout());
+
+        selectAllSquareslabel.setText("Selecione todos os quadrados com:");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 0, 4);
+        jPanel1.add(selectAllSquareslabel, gridBagConstraints);
 
         foodLabel.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         foodLabel.setText("comida");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 0, 4);
+        jPanel1.add(foodLabel, gridBagConstraints);
 
-        ifNoneLabel.setText("Caso não tenha, clique em pular");
+        ifNoneLabel.setText("Caso não tenha, clique em pular.");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 0, 4);
+        jPanel1.add(ifNoneLabel, gridBagConstraints);
 
-        javax.swing.GroupLayout recaptchaPanelLayout = new javax.swing.GroupLayout(recaptchaPanel);
-        recaptchaPanel.setLayout(recaptchaPanelLayout);
-        recaptchaPanelLayout.setHorizontalGroup(
-            recaptchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
-        );
-        recaptchaPanelLayout.setVerticalGroup(
-            recaptchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 395, Short.MAX_VALUE)
-        );
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
+        jPanel2.add(jPanel1, gridBagConstraints);
 
         skipButton.setText("Pular");
         skipButton.addActionListener(new java.awt.event.ActionListener() {
@@ -202,46 +239,53 @@ public class ReCaptcha extends javax.swing.JFrame {
                 skipButtonActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(7, 5, 6, 5);
+        jPanel2.add(skipButton, gridBagConstraints);
+
+        recaptchaPanel.setPreferredSize(new java.awt.Dimension(400, 400));
+
+        javax.swing.GroupLayout recaptchaPanelLayout = new javax.swing.GroupLayout(recaptchaPanel);
+        recaptchaPanel.setLayout(recaptchaPanelLayout);
+        recaptchaPanelLayout.setHorizontalGroup(
+            recaptchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        recaptchaPanelLayout.setVerticalGroup(
+            recaptchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 394, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(recaptchaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(selectAllSquareslabel)
-                                    .addComponent(ifNoneLabel))
-                                .addGap(0, 235, Short.MAX_VALUE)))
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(foodLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(skipButton)
-                        .addGap(46, 46, 46))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(7, Short.MAX_VALUE)
+                .addComponent(recaptchaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(selectAllSquareslabel)
-                .addGap(7, 7, 7)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(foodLabel)
-                    .addComponent(skipButton))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ifNoneLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(recaptchaPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(90, Short.MAX_VALUE)
+                .addComponent(recaptchaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(406, Short.MAX_VALUE)))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skipButtonActionPerformed
@@ -290,6 +334,9 @@ public class ReCaptcha extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel foodLabel;
     private javax.swing.JLabel ifNoneLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel recaptchaPanel;
     private javax.swing.JLabel selectAllSquareslabel;
     private javax.swing.JButton skipButton;
