@@ -97,7 +97,7 @@ public class ReCaptchaConfirmation extends javax.swing.JFrame {
     private void checkBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxActionPerformed
         final Random rng = new Random();
         final boolean isHuman = rng.nextBoolean();
-        if (isHuman) { // TODO: Remove true ||.
+        if (isHuman) {
             IDonateViewer.main(null);
             this.dispose();
         } else {

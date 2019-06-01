@@ -88,7 +88,7 @@ public class PersonEditor extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jList1 = new javax.swing.JList<>();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jPanel1.setLayout(new java.awt.GridBagLayout());
@@ -115,10 +115,9 @@ public class PersonEditor extends javax.swing.JFrame {
         jLabel3.setMinimumSize(new java.awt.Dimension(20, 14));
         jLabel3.setPreferredSize(new java.awt.Dimension(100, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel3, gridBagConstraints);
 
-        jTextField1.setText("jTextField1");
         jTextField1.setMinimumSize(new java.awt.Dimension(20, 26));
         jTextField1.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -133,10 +132,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel2, gridBagConstraints);
 
-        jTextField2.setText("jTextField2");
         jTextField2.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -152,10 +150,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel4, gridBagConstraints);
 
-        jTextField3.setText("jTextField2");
         jTextField3.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -171,10 +168,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel5, gridBagConstraints);
 
-        jTextField4.setText("jTextField2");
         jTextField4.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -190,10 +186,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 4;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel6, gridBagConstraints);
 
-        jTextField5.setText("jTextField2");
         jTextField5.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -209,10 +204,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 5;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel7, gridBagConstraints);
 
-        jTextField6.setText("jTextField2");
         jTextField6.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -221,17 +215,16 @@ public class PersonEditor extends javax.swing.JFrame {
         jPanel5.add(jTextField6, gridBagConstraints);
 
         jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel8.setText("Sexo");
+        jLabel8.setText("Gênero");
         jLabel8.setMaximumSize(new java.awt.Dimension(20, 14));
         jLabel8.setMinimumSize(new java.awt.Dimension(20, 14));
         jLabel8.setPreferredSize(new java.awt.Dimension(100, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel8, gridBagConstraints);
 
-        jTextField7.setText("jTextField2");
         jTextField7.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -247,10 +240,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 7;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel9, gridBagConstraints);
 
-        jTextField8.setText("jTextField2");
         jTextField8.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -266,10 +258,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 8;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 5, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel10, gridBagConstraints);
 
-        jTextField9.setText("jTextField2");
         jTextField9.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -285,10 +276,9 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 9;
-        gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 10);
+        gridBagConstraints.insets = new java.awt.Insets(0, 0, 10, 10);
         jPanel5.add(jLabel11, gridBagConstraints);
 
-        jTextField10.setText("jTextField2");
         jTextField10.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -303,6 +293,11 @@ public class PersonEditor extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridLayout(1, 0, 10, 10));
 
         buttonAdd.setText("Adicionar");
+        buttonAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddActionPerformed(evt);
+            }
+        });
         jPanel2.add(buttonAdd);
 
         buttonEdit.setText("Editar");
@@ -367,6 +362,10 @@ public class PersonEditor extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
+        ResourceEditor.main(null);
+    }//GEN-LAST:event_buttonAddActionPerformed
 
     /**
      * @param args the command line arguments

@@ -104,13 +104,14 @@ public class ReCaptcha extends javax.swing.JFrame {
 
     private ReFigure[] loadRecaptchaFigures() throws IOException {
         final Random rng = new Random();
-        final String dir = "C:\\recaptcha\\";
-        final Stream<Path> dirs = Files.list(new File(dir).toPath());
+        final String dir = "resources/recaptcha/";
+        final String path = this.getClass().getClassLoader().getResource(dir).getPath();
+        final Stream<Path> dirs = Files.list(new File(path).toPath());
         final String dirNumber = Integer.toString(rng.nextInt((int)dirs.count()));
 
         int i = 0;
         final ReFigure[] figures = new ReFigure[this.size * this.size];
-        for (final File file : new File(dir + dirNumber).listFiles()) {
+        for (final File file : new File(path + dirNumber).listFiles()) {
             figures[i++] = new ReFigure(file);
         }
 
