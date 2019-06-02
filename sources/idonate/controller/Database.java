@@ -34,16 +34,16 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class Database {
-    private String username;
-    private String password;
-    private String name;
+    private final String username;
+    private final String password;
+    private final String name;
     
     private String url;
     private Connection connection;
     
     private static int timeout = 1;
     
-    public Database(String username, String password, String name){
+    public Database(String username, String password, String name) {
         this.username = username;
         this.password = password;
         this.name = name;

@@ -446,12 +446,12 @@
                       <StringArray count="8">
                         <StringItem index="0" value="A+"/>
                         <StringItem index="1" value="A-"/>
-                        <StringItem index="2" value="B+"/>
-                        <StringItem index="3" value="B-"/>
-                        <StringItem index="4" value="O+"/>
-                        <StringItem index="5" value="O-"/>
-                        <StringItem index="6" value="AB+"/>
-                        <StringItem index="7" value="AB-"/>
+                        <StringItem index="2" value="AB+"/>
+                        <StringItem index="3" value="AB-"/>
+                        <StringItem index="4" value="B+"/>
+                        <StringItem index="5" value="B-"/>
+                        <StringItem index="6" value="O+"/>
+                        <StringItem index="7" value="O-"/>
                       </StringArray>
                     </Property>
                   </Properties>
@@ -509,7 +509,7 @@
                       <Properties>
                         <Property name="model" type="javax.swing.ListModel" editor="org.netbeans.modules.form.editors2.ListModelEditor">
                           <StringArray count="1">
-                            <StringItem index="0" value="Item"/>
+                            <StringItem index="0" value=" "/>
                           </StringArray>
                         </Property>
                         <Property name="minimumSize" type="java.awt.Dimension" editor="org.netbeans.beaninfo.editors.DimensionEditor">
@@ -581,6 +581,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Concluir"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="buttonDoneActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="buttonCancel">
           <Properties>

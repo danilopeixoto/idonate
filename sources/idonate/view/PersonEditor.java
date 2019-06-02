@@ -27,7 +27,16 @@
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package idonate.view;
 
+import idonate.controller.Database;
+import idonate.controller.PersonAccessor;
+import idonate.controller.ResourceAccessor;
+import idonate.model.Constants;
+import idonate.model.Person;
+import idonate.model.Person.Sex;
+import idonate.model.Resource;
+import java.sql.SQLException;
 import java.text.ParseException;
+import javax.swing.JOptionPane;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
@@ -349,7 +358,7 @@ public class PersonEditor extends javax.swing.JFrame {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel5.add(spinnerMass, gridBagConstraints);
 
-        comboBoxBloodType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-" }));
+        comboBoxBloodType.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "A+", "A-", "AB+", "AB-", "B+", "B-", "O+", "O-" }));
         comboBoxBloodType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 comboBoxBloodTypeActionPerformed(evt);
@@ -378,7 +387,7 @@ public class PersonEditor extends javax.swing.JFrame {
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
         listResources.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item" };
+            String[] strings = { " " };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
@@ -427,6 +436,11 @@ public class PersonEditor extends javax.swing.JFrame {
         jPanel2.setLayout(new java.awt.GridLayout(1, 2, 5, 10));
 
         buttonDone.setText("Concluir");
+        buttonDone.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDoneActionPerformed(evt);
+            }
+        });
         jPanel2.add(buttonDone);
 
         buttonCancel.setText("Cancelar");
@@ -494,6 +508,64 @@ public class PersonEditor extends javax.swing.JFrame {
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
         ResourceEditor.main(null);
     }//GEN-LAST:event_buttonAddActionPerformed
+
+    private boolean isEmpty() {
+        return this.textFieldAddress.getText().isEmpty()
+            || this.spinnerAge.getValue().toString().isEmpty()
+            || this.formattedTextFieldCPF.getText().isEmpty()
+            || this.textFieldEmail.getText().isEmpty()
+            || this.spinnerMass.getValue().toString().isEmpty()
+            || this.textFieldName.getText().isEmpty()
+            || this.formattedTextFieldPhone.getText().isEmpty();
+    }
+    
+    private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
+        if (this.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos!");
+            return;
+        }
+
+        if (!this.textFieldEmail.getText().matches(Constants.EMAIL_REGEX)) {
+            JOptionPane.showMessageDialog(this, "Email inválido");
+            return;
+        }
+
+        Person person = new Person();
+        person.setCPF(this.formattedTextFieldCPF.getText());
+        person.setName(this.textFieldName.getText());
+        person.setAddress(this.textFieldAddress.getText());
+        person.setPhone(this.formattedTextFieldPhone.getText());
+        person.setEmail(this.textFieldEmail.getText());
+        person.setAge(Integer.parseInt(this.spinnerAge.getValue().toString()));
+        person.setSex(this.radioButtonFemale.isSelected() ? Sex.Female : Sex.Male);
+        person.setWeight(Float.parseFloat(this.spinnerMass.getValue().toString()));
+        person.setBloodType(Utils.comboBoxIndexToBloodType(this.comboBoxBloodType.getSelectedIndex()));
+        person.setMedicalConditions(this.textAreaMedicalConditions.getText());
+        
+        Resource resource = ResourceEditor.resource;
+        if (resource != null) {
+            resource.setDonorCPF(person.getCPF());
+        }
+        
+        Database db = new Database("root", "root", "root");
+        try {
+            db.connect();
+            
+            PersonAccessor pa = new PersonAccessor(db);
+            pa.add(person);
+            
+            if (resource != null) {
+                ResourceAccessor ra = new ResourceAccessor(db);
+                ra.add(resource);
+            }
+        } catch (SQLException _) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente em outra vida.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buttonDoneActionPerformed
 
     /**
      * @param args the command line arguments

@@ -137,7 +137,7 @@ public class IDonateViewer extends javax.swing.JFrame {
         jPanel6.setLayout(new java.awt.GridBagLayout());
 
         listPeople.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item" };
+            String[] strings = { " " };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
