@@ -1,12 +1,11 @@
-install: gradle wrapper --gradle-version 4.6
-
 language: java
 
 jdk:
-  - oraclejdk8
+    - oraclejdk8
 
 os:
-  - linux
+    - linux
 
 script:
-  - ./gradlew build
+    - mvn test
+    - mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
