@@ -45,12 +45,13 @@ import javax.swing.text.MaskFormatter;
  *
  * @author Heitor
  */
-public class PersonForm extends javax.swing.JFrame {
+public class PersonDialog extends javax.swing.JDialog {
     /**
      * Creates new form PersonEditor
      */
-    public PersonForm(){
-        this.initComponents();
+    public PersonDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
+        initComponents();
         
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
@@ -110,6 +111,7 @@ public class PersonForm extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         textAreaMedicalConditions = new javax.swing.JTextArea();
         jPanel3 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         listResources = new javax.swing.JList<>();
         jPanel7 = new javax.swing.JPanel();
@@ -387,24 +389,37 @@ public class PersonForm extends javax.swing.JFrame {
 
         jPanel3.setLayout(new java.awt.GridBagLayout());
 
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel12.setText("Recursos");
+        jLabel12.setMaximumSize(new java.awt.Dimension(1, 1));
+        jLabel12.setMinimumSize(new java.awt.Dimension(150, 16));
+        jLabel12.setPreferredSize(new java.awt.Dimension(135, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(6, 7, 6, 6);
+        jPanel3.add(jLabel12, gridBagConstraints);
+
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(150, 147));
+
         listResources.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { " " };
             public int getSize() { return strings.length; }
             public String getElementAt(int i) { return strings[i]; }
         });
-        listResources.setMinimumSize(new java.awt.Dimension(200, 36));
-        listResources.setPreferredSize(new java.awt.Dimension(280, 36));
+        listResources.setMinimumSize(new java.awt.Dimension(150, 36));
+        listResources.setPreferredSize(new java.awt.Dimension(200, 36));
         jScrollPane3.setViewportView(listResources);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 5);
         jPanel3.add(jScrollPane3, gridBagConstraints);
 
-        jPanel7.setLayout(new java.awt.GridLayout(3, 1, 10, 5));
+        jPanel7.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
 
         buttonAdd.setText("Adicionar");
         buttonAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -426,8 +441,10 @@ public class PersonForm extends javax.swing.JFrame {
         jPanel7.add(buttonRemove);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 0, 0, 0);
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 6, 5);
         jPanel3.add(jPanel7, gridBagConstraints);
 
         jPanel4.add(jPanel3);
@@ -468,9 +485,9 @@ public class PersonForm extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 329, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -507,7 +524,7 @@ public class PersonForm extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
-        ResourceForm.main(null);
+        ResourceDialog.main(null, null, true);
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private boolean isEmpty() {
@@ -543,7 +560,7 @@ public class PersonForm extends javax.swing.JFrame {
         person.setBloodType(Utility.comboBoxIndexToBloodType(this.comboBoxBloodType.getSelectedIndex()));
         person.setMedicalConditions(this.textAreaMedicalConditions.getText());
         
-        Resource resource = ResourceForm.resource;
+        Resource resource = ResourceDialog.resource;
         if (resource != null) {
             resource.setDonorCPF(person.getCPF());
         }
@@ -571,7 +588,7 @@ public class PersonForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[], java.awt.Frame parent, boolean modal) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -581,10 +598,18 @@ public class PersonForm extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new PersonForm().setVisible(true);
+                PersonDialog dialog = new PersonDialog(parent, modal);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        dialog.dispose();
+                    }
+                });
+                dialog.setLocationRelativeTo(parent);
+                dialog.setVisible(true);
             }
         });
     }
@@ -602,6 +627,7 @@ public class PersonForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;

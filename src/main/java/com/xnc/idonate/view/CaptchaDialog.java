@@ -25,11 +25,9 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.view;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
@@ -50,9 +48,9 @@ import javax.swing.border.Border;
 
 /**
  *
- * @author Heitor
+ * @author Danilo
  */
-public class CaptchaForm extends javax.swing.JFrame {
+public class CaptchaDialog extends javax.swing.JDialog {
     private final int size = 4;
     
     private final FigureStatus[] figureStatus;
@@ -78,17 +76,23 @@ public class CaptchaForm extends javax.swing.JFrame {
             }
         }
     }
-
+    
     /**
-     * Creates new form ReCaptcha
-     * @throws java.io.IOException
+     * Creates new form CaptchaDialog
      */
-    public CaptchaForm() throws IOException {
+    public CaptchaDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         this.figureStatus = new FigureStatus[this.size * this.size];
         this.initComponents();
-        this.makeRecaptcha();
+        
+        try {
+            this.makeRecaptcha();
+        }
+        catch (IOException exception) {
+            exception.printStackTrace();
+        }
     }
-
+    
     public void checkSolution() {
         for (final FigureStatus fs : this.figureStatus) {
             switch (fs) {
@@ -100,7 +104,9 @@ public class CaptchaForm extends javax.swing.JFrame {
             }
         }
         
-        MainWindow.main(null);
+        LoginWindow parent = (LoginWindow)this.getParent();
+        parent.enableCaptchaCheckbox();
+        
         this.dispose();
     }
 
@@ -192,7 +198,7 @@ public class CaptchaForm extends javax.swing.JFrame {
         skipButton = new javax.swing.JButton();
         recaptchaPanel = new javax.swing.JPanel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("iDonate");
         setResizable(false);
 
@@ -260,7 +266,7 @@ public class CaptchaForm extends javax.swing.JFrame {
         );
         recaptchaPanelLayout.setVerticalGroup(
             recaptchaPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 394, Short.MAX_VALUE)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -274,24 +280,23 @@ public class CaptchaForm extends javax.swing.JFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 401, Short.MAX_VALUE)
+                    .addContainerGap()))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(90, Short.MAX_VALUE)
-                .addComponent(recaptchaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(84, Short.MAX_VALUE)
+                .addComponent(recaptchaPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addContainerGap()
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(406, Short.MAX_VALUE)))
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(414, Short.MAX_VALUE)))
         );
 
         pack();
-        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void skipButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_skipButtonActionPerformed
@@ -301,7 +306,7 @@ public class CaptchaForm extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(final String args[]) {
+    public static void main(String args[], java.awt.Frame parent, boolean modal) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -309,30 +314,23 @@ public class CaptchaForm extends javax.swing.JFrame {
          */
         
         //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            try {
-                new CaptchaForm().setVisible(true);
-            } catch (IOException e) {
-                System.out.println(e.getMessage());
-                System.exit(-1);
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                CaptchaDialog dialog = new CaptchaDialog(parent, modal);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        dialog.dispose();
+                    }
+                });
+                dialog.setLocationRelativeTo(parent);
+                dialog.setVisible(true);
             }
         });
     }
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel foodLabel;
-    private javax.swing.JLabel ifNoneLabel;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel recaptchaPanel;
-    private javax.swing.JLabel selectAllSquareslabel;
-    private javax.swing.JButton skipButton;
-    // End of variables declaration//GEN-END:variables
-
+    
     private class ReFigure extends ImageIcon {
         private final boolean isSolution;
         
@@ -348,4 +346,15 @@ public class CaptchaForm extends javax.swing.JFrame {
             return this.isSolution;
         }
     }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel foodLabel;
+    private javax.swing.JLabel ifNoneLabel;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel recaptchaPanel;
+    private javax.swing.JLabel selectAllSquareslabel;
+    private javax.swing.JButton skipButton;
+    // End of variables declaration//GEN-END:variables
 }

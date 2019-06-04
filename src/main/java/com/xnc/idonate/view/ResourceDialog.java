@@ -44,13 +44,14 @@ import java.sql.Date;
  *
  * @author Heitor
  */
-public class ResourceForm extends javax.swing.JFrame {
+public class ResourceDialog extends javax.swing.JDialog {
     public static Resource resource;
     
     /**
      * Creates new form PersonEditor
      */
-    public ResourceForm() {
+    public ResourceDialog(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         this.initComponents();
         
         try {
@@ -685,6 +686,11 @@ public class ResourceForm extends javax.swing.JFrame {
         footer.add(buttonDone);
 
         buttonCancel.setText("Cancelar");
+        buttonCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelActionPerformed(evt);
+            }
+        });
         footer.add(buttonCancel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -836,10 +842,14 @@ public class ResourceForm extends javax.swing.JFrame {
         this.dispose();
     }//GEN-LAST:event_buttonDoneActionPerformed
 
+    private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_buttonCancelActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[], java.awt.Frame parent, boolean modal) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -850,10 +860,18 @@ public class ResourceForm extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ResourceForm().setVisible(true);
+                ResourceDialog dialog = new ResourceDialog(parent, modal);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        dialog.dispose();
+                    }
+                });
+                dialog.setLocationRelativeTo(parent);
+                dialog.setVisible(true);
             }
         });
     }

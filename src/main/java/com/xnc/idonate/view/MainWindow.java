@@ -29,10 +29,8 @@
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.model.Constants;
-import java.awt.Color;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.JTextField;
 
 /**
  *
@@ -203,7 +201,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
-        PersonForm.main(null);
+        PersonDialog.main(null, this, true);
     }//GEN-LAST:event_buttonAddActionPerformed
 
     /**

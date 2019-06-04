@@ -28,11 +28,7 @@
 
 package com.xnc.idonate.view;
 
-import java.awt.Color;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.util.Random;
-import javax.swing.JTextField;
 
 /**
  *
@@ -197,12 +193,17 @@ public class LoginWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_passwordFieldPasswordActionPerformed
 
+    public void enableCaptchaCheckbox() {
+        checkBoxCaptcha.setSelected(true);
+    }
+    
     private void checkBoxCaptchaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxCaptchaActionPerformed
         final Random rng = new Random();
         final boolean isHuman = rng.nextBoolean();
         
-        if (!isHuman) {
-            CaptchaForm.main(null);
+        if (!isHuman && checkBoxCaptcha.isSelected()) {
+            checkBoxCaptcha.setSelected(false);
+            CaptchaDialog.main(null, this, true);
         }
     }//GEN-LAST:event_checkBoxCaptchaActionPerformed
 
