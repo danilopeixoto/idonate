@@ -55,38 +55,25 @@ public class PersonAccessor extends Accessor {
     
     public boolean add(Person person) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        StringBuilder values = new StringBuilder();
+        preparedStatement = database.createPreparedStatement(
+                "INSERT INTO people(cpf, name, address, phone, email, age," +
+                        "sex, weight, blood_type, medical_conditions, hospital_id) " +
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
         
-        values.append("(\"");
-        values.append(person.getCPF());
-        values.append("\",\"");
-        values.append(person.getName());
-        values.append("\",\"");
-        values.append(person.getAddress());
-        values.append("\",\"");
-        values.append(person.getPhone());
-        values.append("\",\"");
-        values.append(person.getEmail());
-        values.append("\",\"");
-        values.append(person.getAge());
-        values.append("\",\"");
-        values.append(person.getSex().ordinal());
-        values.append("\",\"");
-        values.append(person.getWeight());
-        values.append("\",\"");
-        values.append(person.getBloodType().ordinal());
-        values.append("\",\"");
-        values.append(person.getMedicalConditions());
-        values.append("\",\"");
-        values.append(person.getHospitalID());
-        values.append("\");");
+        preparedStatement.setString(1, person.getCPF());
+        preparedStatement.setString(2, person.getName());
+        preparedStatement.setString(3, person.getAddress());
+        preparedStatement.setString(4, person.getPhone());
+        preparedStatement.setString(5, person.getEmail());
+        preparedStatement.setInt(6, person.getAge());
+        preparedStatement.setInt(7, person.getSex().ordinal());
+        preparedStatement.setFloat(8, person.getWeight());
+        preparedStatement.setInt(9, person.getBloodType().ordinal());
+        preparedStatement.setString(10, person.getMedicalConditions());
+        preparedStatement.setString(11, person.getHospitalID());
         
-        boolean status = statement.execute(
-                "INSERT INTO people(cpf, name, address, phone, email, age,"
-                        + "sex, weight, blood_type, medical_conditions, hospital_id) "
-                        + "VALUES " + values.toString());
+        boolean status = preparedStatement.execute();
         
         database.disconnect();
         
@@ -94,10 +81,12 @@ public class PersonAccessor extends Accessor {
     }
     public boolean remove(String cpf) throws SQLException {
         database.connect();
-        statement = database.createStatement();
+        preparedStatement = database.createPreparedStatement(
+                "DELETE FROM people WHERE id = ?;");
         
-        boolean status = statement.execute(
-                "DELETE FROM people WHERE id = \"" + cpf + "\";");
+        preparedStatement.setString(1, cpf);
+        
+        boolean status = preparedStatement.execute();
         
         database.disconnect();
         
@@ -105,10 +94,12 @@ public class PersonAccessor extends Accessor {
     }
     public boolean has(String cpf) throws SQLException {
         database.connect();
-        statement = database.createStatement();
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM people WHERE id = ?;");
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM people WHERE id = \"" + cpf + "\";");
+        preparedStatement.setString(1, cpf);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -123,10 +114,13 @@ public class PersonAccessor extends Accessor {
     }
     public Person get(String cpf) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM people WHERE id = \"" + cpf + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM people WHERE id = ?;");
+        
+        preparedStatement.setString(1, cpf);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -141,17 +135,17 @@ public class PersonAccessor extends Accessor {
         }
         
         Person person = new Person(
-                personCPF,
-                result.getString(PersonAttributes.Name.ordinal()),
-                result.getString(PersonAttributes.Address.ordinal()),
-                result.getString(PersonAttributes.Phone.ordinal()),
-                result.getString(PersonAttributes.Email.ordinal()),
-                result.getInt(PersonAttributes.Age.ordinal()),
-                Person.Sex.values()[result.getInt(PersonAttributes.Sex.ordinal())],
-                result.getFloat(PersonAttributes.Weight.ordinal()),
-                Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
-                result.getString(PersonAttributes.MedicalConditions.ordinal()),
-                result.getString(PersonAttributes.HospitalID.ordinal()));
+            personCPF,
+            result.getString(PersonAttributes.Name.ordinal()),
+            result.getString(PersonAttributes.Address.ordinal()),
+            result.getString(PersonAttributes.Phone.ordinal()),
+            result.getString(PersonAttributes.Email.ordinal()),
+            result.getInt(PersonAttributes.Age.ordinal()),
+            Person.Sex.values()[result.getInt(PersonAttributes.Sex.ordinal())],
+            result.getFloat(PersonAttributes.Weight.ordinal()),
+            Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
+            result.getString(PersonAttributes.MedicalConditions.ordinal()),
+            result.getString(PersonAttributes.HospitalID.ordinal()));
         
         database.disconnect();
         

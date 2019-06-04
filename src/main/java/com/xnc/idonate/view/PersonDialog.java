@@ -46,12 +46,16 @@ import javax.swing.text.MaskFormatter;
  * @author Heitor
  */
 public class PersonDialog extends javax.swing.JDialog {
+    private Database database;
     /**
      * Creates new form PersonEditor
      */
     public PersonDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
+        
+        database = new Database(
+                Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
         
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
@@ -539,7 +543,7 @@ public class PersonDialog extends javax.swing.JDialog {
     
     private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
         if (this.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos!");
+            JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos.");
             return;
         }
 
@@ -565,21 +569,18 @@ public class PersonDialog extends javax.swing.JDialog {
             resource.setDonorCPF(person.getCPF());
         }
         
-        Database db = new Database("root", "root", "root");
         try {
-            db.connect();
-            
-            PersonAccessor pa = new PersonAccessor(db);
+            PersonAccessor pa = new PersonAccessor(database);
             pa.add(person);
             
             if (resource != null) {
-                ResourceAccessor ra = new ResourceAccessor(db);
+                ResourceAccessor ra = new ResourceAccessor(database);
                 ra.add(resource);
             }
         } catch (SQLException exception) {
             JOptionPane.showMessageDialog(
                     this,
-                    "Houve um erro ao acessar o banco de dados. Tente novamente em outra vida.",
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
                     "Erro",
                     JOptionPane.ERROR_MESSAGE);
         }

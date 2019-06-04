@@ -28,18 +28,29 @@
 
 package com.xnc.idonate.view;
 
+import com.xnc.idonate.controller.Database;
+import com.xnc.idonate.controller.HospitalAccessor;
+import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Hospital;
+import java.sql.SQLException;
 import java.util.Random;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Heitor
  */
 public class LoginWindow extends javax.swing.JFrame {
+    private Database database;
     /**
      * Creates new form IDonateViewer
      */
     public LoginWindow() {
         this.initComponents();
+        database = new Database(
+                Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
     }
 
     /**
@@ -206,10 +217,51 @@ public class LoginWindow extends javax.swing.JFrame {
             CaptchaDialog.main(null, this, true);
         }
     }//GEN-LAST:event_checkBoxCaptchaActionPerformed
-
+    
+    private boolean isEmpty() {
+        return this.textFieldUsername.getText().isEmpty()
+            || this.passwordFieldPassword.getText().isEmpty();
+    }
+    
     private void buttonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonLoginActionPerformed
-        MainWindow.main(null);
-        this.dispose();
+        if (this.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Um ou mais campos obrigatórios não estão preenchidos.");
+            return;
+        }
+        
+        boolean valid = checkBoxCaptcha.isSelected();
+        
+        if (!valid) {
+            JOptionPane.showMessageDialog(this, "A sua humanidade não foi confirmada.");
+            return;
+        }
+        
+        String userID = textFieldUsername.getText();
+        String password = passwordFieldPassword.getText();
+        
+        try {
+            HospitalAccessor hospitalAccessor = new HospitalAccessor(database);
+            Hospital hospital = hospitalAccessor.get(userID);
+            
+            if (hospital != null) {
+                if (hospital.getPassword().equals(password)) {
+                    MainWindow.main(null);
+                    this.dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(this, "Senha inválida.");
+                }
+            }
+            else {
+                JOptionPane.showMessageDialog(this, "Nome de usuário inválido.");
+            }
+        } catch (SQLException exception) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_buttonLoginActionPerformed
 
     /**

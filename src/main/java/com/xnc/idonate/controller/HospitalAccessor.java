@@ -49,27 +49,19 @@ public class HospitalAccessor extends Accessor {
     
     public boolean add(Hospital hospital) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        StringBuilder values = new StringBuilder();
+        preparedStatement = database.createPreparedStatement(
+                "INSERT INTO hospitals(id, password, name, address, phone, email) " +
+                        "VALUES (?, ?, ?, ?, ?, ?);");
         
-        values.append("(\"");
-        values.append(hospital.getID());
-        values.append("\",\"");
-        values.append(hospital.getPassword());
-        values.append("\",\"");
-        values.append(hospital.getName());
-        values.append("\",\"");
-        values.append(hospital.getAddress());
-        values.append("\",\"");
-        values.append(hospital.getPhone());
-        values.append("\",\"");
-        values.append(hospital.getEmail());
-        values.append("\");");
+        preparedStatement.setString(1, hospital.getID());
+        preparedStatement.setString(2, hospital.getPassword());
+        preparedStatement.setString(3, hospital.getName());
+        preparedStatement.setString(4, hospital.getAddress());
+        preparedStatement.setString(5, hospital.getPhone());
+        preparedStatement.setString(6, hospital.getEmail());
         
-        boolean status = statement.execute(
-                "INSERT INTO hospitals(id, password, name, address, phone, email) "
-                        + "VALUES " + values.toString());
+        boolean status = preparedStatement.execute();
         
         database.disconnect();
         
@@ -77,10 +69,13 @@ public class HospitalAccessor extends Accessor {
     }
     public boolean remove(String id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        boolean status = statement.execute(
-                "DELETE FROM hospitals WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "DELETE FROM hospitals WHERE id = ?;");
+        
+        preparedStatement.setString(1, id);
+        
+        boolean status = preparedStatement.execute();
         
         database.disconnect();
         
@@ -88,10 +83,13 @@ public class HospitalAccessor extends Accessor {
     }
     public boolean has(String id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM hospitals WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM hospitals WHERE id = ?;");
+        
+        preparedStatement.setString(1, id);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -106,10 +104,13 @@ public class HospitalAccessor extends Accessor {
     }
     public Hospital get(String id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM hospitals WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM hospitals WHERE id = ?;");
+        
+        preparedStatement.setString(1, id);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();

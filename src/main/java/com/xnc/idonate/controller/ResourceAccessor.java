@@ -74,28 +74,20 @@ public class ResourceAccessor extends Accessor {
     
     public boolean add(Resource resource) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        StringBuilder values = new StringBuilder();
+        preparedStatement = database.createPreparedStatement(
+                "INSERT INTO resources(donor_cpf, donation_date, description," +
+                "acceptor_cpf, acceptation_date, type) " +
+                "VALUES (?, ?, ?, ?, ?, ?);");
         
-        values.append("(\"");
-        values.append(resource.getDonorCPF());
-        values.append("\",\"");
-        values.append(resource.getDonationDate());
-        values.append("\",\"");
-        values.append(resource.getDescription());
-        values.append("\",\"");
-        values.append(resource.getAcceptorCPF());
-        values.append("\",\"");
-        values.append(resource.getAcceptationDate());
-        values.append("\",\"");
-        values.append(resource.getType().ordinal());
-        values.append("\");");
+        preparedStatement.setString(1, resource.getDonorCPF());
+        preparedStatement.setString(2, resource.getDonationDate().toString());
+        preparedStatement.setString(3, resource.getDescription());
+        preparedStatement.setString(4, resource.getAcceptorCPF());
+        preparedStatement.setString(5, resource.getAcceptationDate().toString());
+        preparedStatement.setInt(6, resource.getType().ordinal());
         
-        boolean status = statement.execute(
-                "INSERT INTO resources(donor_cpf, donation_date, description,"
-                        + "acceptor_cpf, acceptation_date, type) "
-                        + "VALUES " + values.toString());
+        boolean status = preparedStatement.execute();
         
         if (!status) {
             database.disconnect();
@@ -115,57 +107,51 @@ public class ResourceAccessor extends Accessor {
         
         resource.setID(id);
         
-        values = new StringBuilder();
         status = false;
         
         switch (resource.getType()) {
             case Organ:
                 Organ organ = (Organ)resource;
                 
-                values.append("(\"");
-                values.append(organ.getID());
-                values.append("\",\"");
-                values.append(organ.getOrganType().ordinal());
-                values.append("\",\"");
-                values.append(organ.getWeight());
-                values.append("\");");
+                preparedStatement = database.createPreparedStatement(
+                        "INSERT INTO organs(resource_id, type, weight) " +
+                        "VALUES (?, ?, ?);");
                 
-                status = statement.execute(
-                    "INSERT INTO organs(resource_id, type, weight) "
-                            + "VALUES " + values.toString());
+                preparedStatement.setInt(1, organ.getID());
+                preparedStatement.setInt(2, organ.getOrganType().ordinal());
+                preparedStatement.setFloat(3, organ.getWeight());
+                
+                status = preparedStatement.execute();
+                
                 break;
                 
             case Blood:
                 Blood blood = (Blood)resource;
                 
-                values.append("(\"");
-                values.append(blood.getID());
-                values.append("\",\"");
-                values.append(blood.getBloodType().ordinal());
-                values.append("\",\"");
-                values.append(blood.getVolume());
-                values.append("\");");
+                preparedStatement = database.createPreparedStatement(
+                        "INSERT INTO bloods(resource_id, type, volume) " +
+                        "VALUES (?, ?, ?);");
                 
-                status = statement.execute(
-                    "INSERT INTO bloods(resource_id, type, volume) "
-                            + "VALUES " + values.toString());
+                preparedStatement.setInt(1, blood.getID());
+                preparedStatement.setInt(2, blood.getBloodType().ordinal());
+                preparedStatement.setFloat(3, blood.getVolume());
+                
+                status = preparedStatement.execute();
                 
                 break;
                 
             case BoneMarrow:
                 BoneMarrow boneMarrow = (BoneMarrow)resource;
                 
-                values.append("(\"");
-                values.append(boneMarrow.getID());
-                values.append("\",\"");
-                values.append(boneMarrow.getHLA());
-                values.append("\",\"");
-                values.append(boneMarrow.getREDOME());
-                values.append("\");");
+                preparedStatement = database.createPreparedStatement(
+                        "INSERT INTO bone_marrows(resource_id, hla, redome) " +
+                        "VALUES (?, ?, ?);");
                 
-                status = statement.execute(
-                    "INSERT INTO bone_marrows(resource_id, hla, redome) "
-                            + "VALUES " + values.toString());
+                preparedStatement.setInt(1, boneMarrow.getID());
+                preparedStatement.setString(2, boneMarrow.getHLA());
+                preparedStatement.setString(3, boneMarrow.getREDOME());
+                
+                status = preparedStatement.execute();
                 
                 break;
                 
@@ -179,10 +165,13 @@ public class ResourceAccessor extends Accessor {
     }
     public boolean remove(int id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM resources WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM resources WHERE id = ?;");
+        
+        preparedStatement.setInt(1, id);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -194,18 +183,33 @@ public class ResourceAccessor extends Accessor {
         
         switch (type) {
             case Organ:
-                status = statement.execute(
-                         "DELETE FROM organs WHERE id = \"" + id + "\";");
+                preparedStatement = database.createPreparedStatement(
+                        "DELETE FROM organs WHERE id = ?;");
+        
+                preparedStatement.setInt(1, id);
+                
+                status = preparedStatement.execute();
+                
                 break;
                 
             case Blood:
-                status = statement.execute(
-                         "DELETE FROM bloods WHERE id = \"" + id + "\";");
+                preparedStatement = database.createPreparedStatement(
+                        "DELETE FROM bloods WHERE id = ?;");
+        
+                preparedStatement.setInt(1, id);
+                
+                status = preparedStatement.execute();
+                
                 break;
                 
             case BoneMarrow:
-                status = statement.execute(
-                         "DELETE FROM bone_marrows WHERE id = \"" + id + "\";");
+                 preparedStatement = database.createPreparedStatement(
+                        "DELETE FROM bone_marrows WHERE id = ?;");
+        
+                preparedStatement.setInt(1, id);
+                
+                status = preparedStatement.execute();
+                
                 break;
                 
             default:
@@ -218,10 +222,13 @@ public class ResourceAccessor extends Accessor {
     }
     public boolean has(int id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM resources WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+            "SELECT * FROM resources WHERE id = ?");
+        
+        preparedStatement.setInt(1, id);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -236,10 +243,13 @@ public class ResourceAccessor extends Accessor {
     }
     public Resource get(int id) throws SQLException {
         database.connect();
-        statement = database.createStatement();
         
-        ResultSet result = statement.executeQuery(
-                "SELECT * FROM resources WHERE id = \"" + id + "\";");
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM resources WHERE id = ?;");
+        
+        preparedStatement.setInt(1, id);
+        
+        ResultSet result = preparedStatement.executeQuery();
         
         if (!result.next()) {
             database.disconnect();
@@ -258,9 +268,13 @@ public class ResourceAccessor extends Accessor {
         
         switch (type) {
             case Organ:
-                ResultSet organResult = statement.executeQuery(
-                        "SELECT * FROM organs WHERE id = \"" + id + "\";");
-            
+                preparedStatement = database.createPreparedStatement(
+                        "SELECT * FROM organs WHERE id = ?;");
+                
+                preparedStatement.setInt(1, id);
+                
+                ResultSet organResult = preparedStatement.executeQuery();
+                
                 if (result.next()) {
                     resource = new Organ(
                             result.getInt(ResourceAttributes.ID.ordinal()),
@@ -276,8 +290,12 @@ public class ResourceAccessor extends Accessor {
                 break;
                 
             case Blood:
-                ResultSet bloodResult = statement.executeQuery(
-                         "SELECT * FROM bloods WHERE id = \"" + id + "\";");
+                preparedStatement = database.createPreparedStatement(
+                        "SELECT * FROM bloods WHERE id = ?;");
+                
+                preparedStatement.setInt(1, id);
+                
+                ResultSet bloodResult = preparedStatement.executeQuery();
                 
                 if (result.next()) {
                     resource = new Blood(
@@ -294,8 +312,12 @@ public class ResourceAccessor extends Accessor {
                 break;
                 
             case BoneMarrow:
-                ResultSet boneMarrowResult = statement.executeQuery(
-                         "SELECT * FROM bone_marrows WHERE id = \"" + id + "\";");
+                preparedStatement = database.createPreparedStatement(
+                        "SELECT * FROM bone_marrows WHERE id = ?;");
+                
+                preparedStatement.setInt(1, id);
+                
+                ResultSet boneMarrowResult = preparedStatement.executeQuery();
                 
                 if (result.next()) {
                     resource = new BoneMarrow(

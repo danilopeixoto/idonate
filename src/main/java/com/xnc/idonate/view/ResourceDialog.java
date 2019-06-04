@@ -870,6 +870,7 @@ public class ResourceDialog extends javax.swing.JDialog {
                         dialog.dispose();
                     }
                 });
+                
                 dialog.setLocationRelativeTo(parent);
                 dialog.setVisible(true);
             }

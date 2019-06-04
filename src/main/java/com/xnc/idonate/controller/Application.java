@@ -34,8 +34,6 @@ import javax.swing.UIManager;
 
 public class Application {
     public static void main(String[] arguments) {
-        Database database = new Database("root", "12345", "idonate");
-        
         try {
             UIManager.setLookAndFeel(new DarculaLaf());
         } catch (Exception e) {
