@@ -25,24 +25,40 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.view;
 
+import com.xnc.idonate.controller.Database;
+import com.xnc.idonate.controller.PersonAccessor;
 import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Person;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 
 /**
  *
  * @author Heitor
  */
 public class MainWindow extends javax.swing.JFrame implements FocusListener {
+    private DefaultListModel dlm;
+    private List<Person> pessoas;
+    private Database database;
+
     /**
      * Creates new form IDonateViewer
      */
     public MainWindow() {
+        database = new Database(Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
         this.initComponents();
-        
+        dlm = new DefaultListModel();
+        pessoas = new ArrayList<>();
+        frameInitialization();
+
         textFieldSearch.addFocusListener(this);
     }
 
@@ -204,6 +220,20 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         PersonDialog.main(null, this, true);
     }//GEN-LAST:event_buttonAddActionPerformed
 
+    private void frameInitialization() {
+        PersonAccessor acessor = new PersonAccessor(database);
+        try {
+            pessoas = acessor.getAll();
+        } catch (SQLException ex) {
+            System.out.println("Error [MainWindow.frameInitialization]: " + ex.getMessage());
+        }
+        
+        for (int i = 0; i < pessoas.size(); i++) {
+            String r = pessoas.get(i).getName() + " - " + pessoas.get(i).getCPF() + " - " + pessoas.get(i).getPhone();
+            dlm.add(i, r);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -213,7 +243,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        
+
         //</editor-fold>
 
         /* Create and display the form */

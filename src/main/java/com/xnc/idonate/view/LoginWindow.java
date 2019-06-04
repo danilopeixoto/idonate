@@ -33,9 +33,6 @@ import com.xnc.idonate.controller.HospitalAccessor;
 import com.xnc.idonate.model.Constants;
 import com.xnc.idonate.model.Hospital;
 import java.sql.SQLException;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -209,10 +206,7 @@ public class LoginWindow extends javax.swing.JFrame {
     }
     
     private void checkBoxCaptchaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxCaptchaActionPerformed
-        final Random rng = new Random();
-        final boolean isHuman = rng.nextBoolean();
-        
-        if (!isHuman && checkBoxCaptcha.isSelected()) {
+        if (checkBoxCaptcha.isSelected()) {
             checkBoxCaptcha.setSelected(false);
             CaptchaDialog.main(null, this, true);
         }

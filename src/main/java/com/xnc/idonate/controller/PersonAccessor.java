@@ -32,6 +32,7 @@ import com.xnc.idonate.model.Blood;
 import com.xnc.idonate.model.Person;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class PersonAccessor extends Accessor {
     private enum PersonAttributes {
@@ -150,5 +151,34 @@ public class PersonAccessor extends Accessor {
         database.disconnect();
         
         return person;
+    }
+    
+    public ArrayList<Person> getAll() throws SQLException {
+        database.connect();
+        
+        statement = database.createStatement();
+        
+        ResultSet result = statement.executeQuery("SELECT * FROM people;");
+        
+        ArrayList<Person> peopleList = new ArrayList();
+        
+        while (result.next()) {
+            Person person = new Person(
+                    result.getString(PersonAttributes.CPF.ordinal()),
+                    result.getString(PersonAttributes.Name.ordinal()),
+                    result.getString(PersonAttributes.Address.ordinal()),
+                    result.getString(PersonAttributes.Phone.ordinal()),
+                    result.getString(PersonAttributes.Email.ordinal()),
+                    result.getInt(PersonAttributes.Age.ordinal()),
+                    Person.Sex.values()[result.getInt(PersonAttributes.Sex.ordinal())],
+                    result.getFloat(PersonAttributes.Weight.ordinal()),
+                    Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
+                    result.getString(PersonAttributes.MedicalConditions.ordinal()),
+                    result.getString(PersonAttributes.HospitalID.ordinal()));
+            
+            peopleList.add(person);
+        }
+        
+        return peopleList;
     }
 }
