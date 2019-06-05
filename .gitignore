@@ -2,3 +2,5 @@ target/
 
 nb-configuration.xml
 nbactions.xml
+
+auth.txt
