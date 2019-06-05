@@ -49,16 +49,18 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private List<Person> pessoas;
     private Database database;
 
+    private String hospitalID;
+
     /**
      * Creates new form IDonateViewer
      */
-    public MainWindow() {
+    public MainWindow(String hospitalID) {
         database = new Database(Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
         this.initComponents();
         dlm = new DefaultListModel();
         pessoas = new ArrayList<>();
-        frameInitialization();
-
+        this.hospitalID = hospitalID;
+        frameInitialization();      
         textFieldSearch.addFocusListener(this);
     }
 
@@ -223,21 +225,22 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private void frameInitialization() {
         PersonAccessor acessor = new PersonAccessor(database);
         try {
-            pessoas = acessor.getAll();
+            pessoas = acessor.getAll(hospitalID);
         } catch (SQLException ex) {
             System.out.println("Error [MainWindow.frameInitialization]: " + ex.getMessage());
         }
-        
+
         for (int i = 0; i < pessoas.size(); i++) {
             String r = pessoas.get(i).getName() + " - " + pessoas.get(i).getCPF() + " - " + pessoas.get(i).getPhone();
             dlm.add(i, r);
         }
+        listPeople.setModel(dlm);
     }
 
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
+    public static void main(String args[], String hospitalID) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -249,7 +252,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new MainWindow().setVisible(true);
+                new MainWindow(hospitalID).setVisible(true);
             }
         });
     }

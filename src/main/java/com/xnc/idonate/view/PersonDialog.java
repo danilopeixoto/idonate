@@ -25,18 +25,22 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.controller.Database;
 import com.xnc.idonate.controller.PersonAccessor;
 import com.xnc.idonate.controller.ResourceAccessor;
+import com.xnc.idonate.model.Blood;
 import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Organ;
 import com.xnc.idonate.model.Person;
 import com.xnc.idonate.model.Person.Sex;
 import com.xnc.idonate.model.Resource;
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
@@ -47,31 +51,81 @@ import javax.swing.text.MaskFormatter;
  */
 public class PersonDialog extends javax.swing.JDialog {
     private Database database;
+    private DefaultListModel dlm;
+    private List<Resource> resourceList;
+
     /**
      * Creates new form PersonEditor
      */
     public PersonDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
-        
+        dlm = new DefaultListModel();
+        resourceList = new ArrayList<>();
+
         database = new Database(
                 Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
         
+        frameInitialization();
+
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
             cpfMask.setPlaceholderCharacter('0');
-        
+
             formattedTextFieldCPF.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
-            
+
             MaskFormatter phoneMask = new MaskFormatter("(##) #####-####");
             phoneMask.setPlaceholderCharacter('0');
-            
+
             formattedTextFieldPhone.setFormatterFactory(
                     new DefaultFormatterFactory(phoneMask));
         } catch (ParseException exception) {
             exception.printStackTrace();
         }
+    }
+    
+    private void frameInitialization() {
+        /*ResourceAccessor acessor = new ResourceAccessor(database);
+        
+        try {
+            resourceList = acessor.getAll(hosp);
+        } catch (SQLException ex) {
+            System.out.println("Error [MainWindow.frameInitialization]: " + ex.getMessage());
+        }
+
+        for (int i = 0; i < pessoas.size(); i++) {
+            String r = pessoas.get(i).getName() + " - " + pessoas.get(i).getCPF() + " - " + pessoas.get(i).getPhone();
+            dlm.add(i, r);
+        }
+        listPeople.setModel(dlm);*/
+    }
+    
+    public void updateResourceList() {
+        for (int i = 0; i < resourceList.size(); i++) {
+            Resource resource = resourceList.get(i);
+            String r = null;
+            
+            if (resource.getType() == Resource.ResourceType.Blood) {
+                Blood blood = (Blood)resource;
+                
+                r = Utility.bloodTypeToString(blood.getBloodType()) + " - " +
+                        resource.getDonationDate().toString();
+            }
+            else if (resource.getType() == Resource.ResourceType.Organ) {
+                Organ organ = (Organ)resource;
+                
+                r = Utility.organTypeToString(organ.getOrganType()) + " - " +
+                        resource.getDonationDate().toString();
+            }
+            else {
+                r = "Bone Marrow - " +
+                        resource.getDonationDate().toString();
+            }
+            
+            dlm.add(i, r);
+        }
+        listResources.setModel(dlm);
     }
 
     /**
@@ -528,19 +582,19 @@ public class PersonDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_buttonCancelActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
-        ResourceDialog.main(null, null, true);
+        ResourceDialog.main(null, null, true, this, resourceList);
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private boolean isEmpty() {
         return this.textFieldAddress.getText().isEmpty()
-            || this.spinnerAge.getValue().toString().isEmpty()
-            || this.formattedTextFieldCPF.getText().isEmpty()
-            || this.textFieldEmail.getText().isEmpty()
-            || this.spinnerMass.getValue().toString().isEmpty()
-            || this.textFieldName.getText().isEmpty()
-            || this.formattedTextFieldPhone.getText().isEmpty();
+                || this.spinnerAge.getValue().toString().isEmpty()
+                || this.formattedTextFieldCPF.getText().isEmpty()
+                || this.textFieldEmail.getText().isEmpty()
+                || this.spinnerMass.getValue().toString().isEmpty()
+                || this.textFieldName.getText().isEmpty()
+                || this.formattedTextFieldPhone.getText().isEmpty();
     }
-    
+
     private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
         if (this.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos.");
@@ -564,16 +618,16 @@ public class PersonDialog extends javax.swing.JDialog {
         person.setBloodType(Utility.comboBoxIndexToBloodType(this.comboBoxBloodType.getSelectedIndex()));
         person.setMedicalConditions(this.textAreaMedicalConditions.getText());
         
-        Resource resource = ResourceDialog.resource;
-        if (resource != null) {
+        
+        for (Resource resource : resourceList) {
             resource.setDonorCPF(person.getCPF());
         }
-        
+
         try {
             PersonAccessor pa = new PersonAccessor(database);
             pa.add(person);
-            
-            if (resource != null) {
+
+            for (Resource resource : resourceList) {
                 ResourceAccessor ra = new ResourceAccessor(database);
                 ra.add(resource);
             }
@@ -595,7 +649,7 @@ public class PersonDialog extends javax.swing.JDialog {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        
+
         //</editor-fold>
         //</editor-fold>
 

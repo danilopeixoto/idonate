@@ -25,7 +25,6 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.controller;
 
 import com.xnc.idonate.model.Blood;
@@ -33,6 +32,7 @@ import com.xnc.idonate.model.Person;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PersonAccessor extends Accessor {
     private enum PersonAttributes {
@@ -49,19 +49,19 @@ public class PersonAccessor extends Accessor {
         MedicalConditions,
         HospitalID
     }
-    
+
     public PersonAccessor(Database database) {
         super(database);
     }
-    
+
     public boolean add(Person person) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
-                "INSERT INTO people(cpf, name, address, phone, email, age," +
-                        "sex, weight, blood_type, medical_conditions, hospital_id) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
-        
+                "INSERT INTO people(cpf, name, address, phone, email, age,"
+                + "sex, weight, blood_type, medical_conditions, hospital_id) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);");
+
         preparedStatement.setString(1, person.getCPF());
         preparedStatement.setString(2, person.getName());
         preparedStatement.setString(3, person.getAddress());
@@ -73,95 +73,101 @@ public class PersonAccessor extends Accessor {
         preparedStatement.setInt(9, person.getBloodType().ordinal());
         preparedStatement.setString(10, person.getMedicalConditions());
         preparedStatement.setString(11, person.getHospitalID());
-        
+
         boolean status = preparedStatement.execute();
-        
+
         database.disconnect();
-        
+
         return status;
     }
+
     public boolean remove(String cpf) throws SQLException {
         database.connect();
         preparedStatement = database.createPreparedStatement(
                 "DELETE FROM people WHERE id = ?;");
-        
+
         preparedStatement.setString(1, cpf);
-        
+
         boolean status = preparedStatement.execute();
-        
+
         database.disconnect();
-        
+
         return status;
     }
+
     public boolean has(String cpf) throws SQLException {
         database.connect();
         preparedStatement = database.createPreparedStatement(
                 "SELECT * FROM people WHERE id = ?;");
-        
+
         preparedStatement.setString(1, cpf);
-        
+
         ResultSet result = preparedStatement.executeQuery();
-        
+
         if (!result.next()) {
             database.disconnect();
             return false;
         }
-        
+
         String personCPF = result.getString(PersonAttributes.CPF.ordinal());
-        
+
         database.disconnect();
-        
+
         return personCPF != null;
     }
+
     public Person get(String cpf) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
                 "SELECT * FROM people WHERE id = ?;");
-        
+
         preparedStatement.setString(1, cpf);
-        
+
         ResultSet result = preparedStatement.executeQuery();
-        
+
         if (!result.next()) {
             database.disconnect();
             return null;
         }
-        
+
         String personCPF = result.getString(PersonAttributes.CPF.ordinal());
-        
+
         if (personCPF == null) {
             database.disconnect();
             return null;
         }
-        
+
         Person person = new Person(
-            personCPF,
-            result.getString(PersonAttributes.Name.ordinal()),
-            result.getString(PersonAttributes.Address.ordinal()),
-            result.getString(PersonAttributes.Phone.ordinal()),
-            result.getString(PersonAttributes.Email.ordinal()),
-            result.getInt(PersonAttributes.Age.ordinal()),
-            Person.Sex.values()[result.getInt(PersonAttributes.Sex.ordinal())],
-            result.getFloat(PersonAttributes.Weight.ordinal()),
-            Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
-            result.getString(PersonAttributes.MedicalConditions.ordinal()),
-            result.getString(PersonAttributes.HospitalID.ordinal()));
-        
+                personCPF,
+                result.getString(PersonAttributes.Name.ordinal()),
+                result.getString(PersonAttributes.Address.ordinal()),
+                result.getString(PersonAttributes.Phone.ordinal()),
+                result.getString(PersonAttributes.Email.ordinal()),
+                result.getInt(PersonAttributes.Age.ordinal()),
+                Person.Sex.values()[result.getInt(PersonAttributes.Sex.ordinal())],
+                result.getFloat(PersonAttributes.Weight.ordinal()),
+                Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
+                result.getString(PersonAttributes.MedicalConditions.ordinal()),
+                result.getString(PersonAttributes.HospitalID.ordinal()));
+
         database.disconnect();
-        
+
         return person;
     }
-    
-    public ArrayList<Person> getAll() throws SQLException {
+
+    public List<Person> getAll(String hospitalID) throws SQLException {
         database.connect();
-        
-        statement = database.createStatement();
-        
-        ResultSet result = statement.executeQuery("SELECT * FROM people;");
-        
-        ArrayList<Person> peopleList = new ArrayList();
-        
+
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM people WHERE hospital_id = ?;");
+
+        preparedStatement.setString(1, hospitalID);
+
+        ResultSet result = preparedStatement.executeQuery();
+
+        List<Person> personList = new ArrayList<>();
+
         while (result.next()) {
             Person person = new Person(
                     result.getString(PersonAttributes.CPF.ordinal()),
@@ -175,10 +181,12 @@ public class PersonAccessor extends Accessor {
                     Blood.BloodType.values()[result.getInt(PersonAttributes.BloodType.ordinal())],
                     result.getString(PersonAttributes.MedicalConditions.ordinal()),
                     result.getString(PersonAttributes.HospitalID.ordinal()));
-            
-            peopleList.add(person);
+
+            personList.add(person);
         }
-        
-        return peopleList;
+
+        database.disconnect();
+
+        return personList;
     }
 }

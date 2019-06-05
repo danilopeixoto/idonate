@@ -25,7 +25,6 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.model.Blood;
@@ -39,46 +38,51 @@ import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
  * @author Heitor
  */
 public class ResourceDialog extends javax.swing.JDialog {
-    public static Resource resource;
-    
+    private javax.swing.JDialog parentDialog;
+    private List<Resource> resourceList;
+
     /**
      * Creates new form PersonEditor
      */
-    public ResourceDialog(java.awt.Frame parent, boolean modal) {
+    public ResourceDialog(java.awt.Frame parent, boolean modal,
+            javax.swing.JDialog dialogParent, List<Resource> resourceList) {
         super(parent, modal);
+        this.parentDialog = dialogParent;
         this.initComponents();
-        
+
+        this.resourceList = resourceList;
+
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
             cpfMask.setPlaceholderCharacter('0');
-            
+
             MaskFormatter dateMask = new MaskFormatter("##/##/####");
             dateMask.setPlaceholderCharacter('0');
-            
+
             MaskFormatter numberMask = new MaskFormatter("##########");
-            
+
             formattedTextAcceptorCPFBlood.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
-            
+
             formattedTextAcceptorCPFOrgan.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
-            
+
             formattedTextAcceptorCPFBoneMarrow.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
-            
+
             formattedTextHLABoneMarrow.setFormatterFactory(
                     new DefaultFormatterFactory(numberMask));
-            
+
             formattedTextREDOMEBoneMarrow.setFormatterFactory(
                     new DefaultFormatterFactory(numberMask));
-        }
-        catch (ParseException exception) {
+        } catch (ParseException exception) {
             exception.printStackTrace();
         }
     }
@@ -742,8 +746,8 @@ public class ResourceDialog extends javax.swing.JDialog {
 
     private void resourceTypeChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resourceTypeChanged
         String selectedOption = this.buttonGroupResource.getSelection().getActionCommand();
-        
-        switch(selectedOption) {
+
+        switch (selectedOption) {
             case "0":
                 this.tabbedPane.setSelectedIndex(0);
                 break;
@@ -765,22 +769,22 @@ public class ResourceDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_formattedTextAcceptorCPFBloodActionPerformed
 
     private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
-        resource = null;
+        Resource resource = null;
         switch (this.tabbedPane.getSelectedIndex()) {
             case 0: {
                 final Blood blood = new Blood();
-                
+
                 final Date date = new Date(this.datePickerDonationBlood.getDate().getTime());
                 final String description = this.textAreaDescriptionBlood.getText();
                 final BloodType bloodType = Utility.comboBoxIndexToBloodType(this.comboBoxTypeBlood.getSelectedIndex());
-                
+
                 final float volume = Float.parseFloat(this.spinnerVolumeBlood.getValue().toString());
                 final String cpf = this.formattedTextAcceptorCPFBlood.getText();
                 if (this.datePickerAcceptionBlood.getDate() != null) {
                     final Date acceptionDate = new Date(this.datePickerAcceptionBlood.getDate().getTime());
                     blood.setAcceptationDate(acceptionDate);
                 }
-                
+
                 blood.setAcceptorCPF(cpf);
                 blood.setBloodType(bloodType);
                 blood.setDescription(description);
@@ -792,18 +796,18 @@ public class ResourceDialog extends javax.swing.JDialog {
 
             case 1: {
                 final Organ organ = new Organ();
-                
+
                 final Date date = new Date(this.datePickerDonationOrgan.getDate().getTime());
                 final String description = this.textAreaDescriptionOrgan.getText();
                 final OrganType organType = Utility.comboBoxIndexToOrganType(this.comboBoxTypeOrgan.getSelectedIndex());
-                
+
                 final float weight = Float.parseFloat(this.spinnerWeightOrgan.getValue().toString());
                 final String cpf = this.formattedTextAcceptorCPFOrgan.getText();
                 if (this.datePickerAcceptionOrgan.getDate() != null) {
                     final Date acceptionDate = new Date(this.datePickerAcceptionOrgan.getDate().getTime());
                     organ.setAcceptationDate(acceptionDate);
                 }
-                
+
                 organ.setAcceptorCPF(cpf);
                 organ.setDescription(description);
                 organ.setDonationDate(date);
@@ -815,7 +819,7 @@ public class ResourceDialog extends javax.swing.JDialog {
 
             case 2: {
                 final BoneMarrow bm = new BoneMarrow();
-                
+
                 final Date date = new Date(this.datePickerDonationBoneMarrow.getDate().getTime());
                 final String description = this.textAreaDescriptionBoneMarrow.getText();
                 final String hla = this.formattedTextHLABoneMarrow.getText();
@@ -825,20 +829,27 @@ public class ResourceDialog extends javax.swing.JDialog {
                     final Date acceptionDate = new Date(this.datePickerAcceptionBoneMarrow.getDate().getTime());
                     bm.setAcceptationDate(acceptionDate);
                 }
-                
+
                 bm.setAcceptorCPF(cpf);
                 bm.setDescription(description);
                 bm.setDonationDate(date);
                 bm.setHLA(hla);
                 bm.setREDOME(redome);
+
                 resource = bm;
+
                 break;
             }
 
             default:
                 throw new UnsupportedOperationException();
         }
+
+        if (resource != null)
+            resourceList.add(resource);
         
+        PersonDialog dialog = (PersonDialog)parentDialog;
+        dialog.updateResourceList();
         this.dispose();
     }//GEN-LAST:event_buttonDoneActionPerformed
 
@@ -849,7 +860,8 @@ public class ResourceDialog extends javax.swing.JDialog {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[], java.awt.Frame parent, boolean modal) {
+    public static void main(String args[], java.awt.Frame parent, boolean modal,
+            javax.swing.JDialog dialogParent, List<Resource> resourceList) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -863,14 +875,14 @@ public class ResourceDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ResourceDialog dialog = new ResourceDialog(parent, modal);
+                ResourceDialog dialog = new ResourceDialog(parent, modal, dialogParent, resourceList);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
                         dialog.dispose();
                     }
                 });
-                
+
                 dialog.setLocationRelativeTo(parent);
                 dialog.setVisible(true);
             }

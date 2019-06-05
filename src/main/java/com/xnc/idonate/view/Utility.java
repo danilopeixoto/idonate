@@ -32,6 +32,37 @@ import com.xnc.idonate.model.Blood.BloodType;
 import com.xnc.idonate.model.Organ.OrganType;
 
 class Utility {
+    static String organTypeToString(OrganType organType) {
+        switch (organType) {
+            case Heart: return "Heart";
+            case Lungs: return "Lungs";
+            case Liver: return "Liver";
+            case Kidneys: return "Kidneys";
+            case Pancreas: return "Pancreas";
+            case Intestine: return "Intestine";
+            case Skin: return "Skin";
+            case Bone: return "Bone";
+            case Cornea: return "Cornea";
+            case Vein: return "Vein";
+            case Tendon: return "Tendon";
+            default: return "None";
+        }
+    }
+    
+    static String bloodTypeToString(BloodType bloodType) {
+        switch (bloodType) {
+            case APlus: return "A+";
+            case BPlus: return "B+";
+            case OPlus: return "O+";
+            case ABPlus: return "AB+";
+            case AMinus: return "A-";
+            case BMinus: return "B-";
+            case OMinus: return "O-";
+            case ABMinus: return "AB-";
+            default: return "None";
+        }
+    }
+    
     static BloodType comboBoxIndexToBloodType(int index) {
         switch (index) {
             case 0: return BloodType.APlus;
