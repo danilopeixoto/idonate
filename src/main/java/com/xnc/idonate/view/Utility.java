@@ -34,17 +34,17 @@ import com.xnc.idonate.model.Organ.OrganType;
 class Utility {
     static String organTypeToString(OrganType organType) {
         switch (organType) {
-            case Heart: return "Heart";
-            case Lungs: return "Lungs";
-            case Liver: return "Liver";
-            case Kidneys: return "Kidneys";
-            case Pancreas: return "Pancreas";
-            case Intestine: return "Intestine";
-            case Skin: return "Skin";
-            case Bone: return "Bone";
-            case Cornea: return "Cornea";
-            case Vein: return "Vein";
-            case Tendon: return "Tendon";
+            case Heart: return "Coração";
+            case Lungs: return "Pulmões";
+            case Liver: return "Fígado";
+            case Kidneys: return "Rins";
+            case Pancreas: return "Pâncreas";
+            case Intestine: return "Intestino";
+            case Skin: return "Pele";
+            case Bone: return "Osso";
+            case Cornea: return "Córnea";
+            case Vein: return "Veia";
+            case Tendon: return "Tendão";
             default: return "None";
         }
     }
@@ -77,19 +77,50 @@ class Utility {
         }
     }
     
+    static int bloodTypeToComboBoxIndex(BloodType type) {
+        switch (type) {
+            case APlus: return 0;
+            case AMinus: return 1;
+            case ABPlus: return 2;
+            case ABMinus: return 3;
+            case BPlus: return 4;
+            case BMinus: return 5;
+            case OPlus: return 6;
+            case OMinus: return 7;
+            default: throw new IndexOutOfBoundsException();
+        }
+    }
+    
     static OrganType comboBoxIndexToOrganType(int index) {
         switch (index) {
-            case 0: return OrganType.Bone;
+            case 0: return OrganType.Heart;
             case 1: return OrganType.Cornea;
-            case 2: return OrganType.Heart;
+            case 2: return OrganType.Liver;
             case 3: return OrganType.Intestine;
-            case 4: return OrganType.Kidneys;
-            case 5: return OrganType.Liver;
-            case 6: return OrganType.Lungs;
-            case 7: return OrganType.Pancreas;
-            case 8: return OrganType.Skin;
+            case 4: return OrganType.Bone;
+            case 5: return OrganType.Pancreas;
+            case 6: return OrganType.Skin;
+            case 7: return OrganType.Lungs;
+            case 8: return OrganType.Kidneys;
             case 9: return OrganType.Tendon;
             case 10: return OrganType.Vein;
+            default: throw new IndexOutOfBoundsException();
+        }
+    }
+    
+    static int organTypeToComboBoxIndex(OrganType type) {
+        switch (type) {
+            case Heart: return 0;
+            case Cornea: return 1;
+            case Liver: return 2;
+            case Intestine: return 3;
+            case Bone: return 4;
+            case Pancreas: return 5;
+            case Skin: return 6;
+            case Lungs: return 7;
+            case Kidneys: return 8;
+            case Tendon: return 9;
+            case Vein: return 10;
             default: throw new IndexOutOfBoundsException();
         }
     }

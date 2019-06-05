@@ -1,4 +1,4 @@
-// Copyright (c) 2019, Bruno Caputo, Danilo Peixoto and Heitor Toledo.
+//// Copyright (c) 2019, Bruno Caputo, Danilo Peixoto and Heitor Toledo.
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -32,9 +32,8 @@ import com.xnc.idonate.model.Blood.BloodType;
 
 public class Person {
     public enum Sex {
-        None,
-        Female,
-        Male
+        Male,
+        Female
     }
     
     private String cpf;

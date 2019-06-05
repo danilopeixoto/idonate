@@ -84,7 +84,7 @@ public class PersonAccessor extends Accessor {
     public boolean remove(String cpf) throws SQLException {
         database.connect();
         preparedStatement = database.createPreparedStatement(
-                "DELETE FROM people WHERE id = ?;");
+                "DELETE FROM people WHERE cpf = ?;");
 
         preparedStatement.setString(1, cpf);
 
@@ -97,8 +97,9 @@ public class PersonAccessor extends Accessor {
 
     public boolean has(String cpf) throws SQLException {
         database.connect();
+        
         preparedStatement = database.createPreparedStatement(
-                "SELECT * FROM people WHERE id = ?;");
+                "SELECT * FROM people WHERE cpf = ?;");
 
         preparedStatement.setString(1, cpf);
 
@@ -120,7 +121,7 @@ public class PersonAccessor extends Accessor {
         database.connect();
 
         preparedStatement = database.createPreparedStatement(
-                "SELECT * FROM people WHERE id = ?;");
+                "SELECT * FROM people WHERE cpf = ?;");
 
         preparedStatement.setString(1, cpf);
 

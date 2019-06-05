@@ -5,10 +5,9 @@ import com.xnc.idonate.model.Resource;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  *
@@ -19,11 +18,13 @@ public class NotificationManager {
     private final String authToken;
     private final PhoneNumber sender;
     
-    public NotificationManager(final String file) throws IOException {
-        List<String> lines = Files.readAllLines(Paths.get(file));
-        this.accountSid = lines.get(0);
-        this.authToken = lines.get(1);
-        this.sender = this.properNumber(lines.get(2));
+    public NotificationManager() throws IOException {
+        final String path = this.getClass().getClassLoader().getResource("services.auth").getPath();
+        BufferedReader br = new BufferedReader(new FileReader(path));
+        
+        this.accountSid = br.readLine();
+        this.authToken = br.readLine();
+        this.sender = this.properNumber(br.readLine());
     }
     
     public NotificationManager(
@@ -40,7 +41,7 @@ public class NotificationManager {
             final Resource resource) {
         this.sendSms(
                 person,
-                "O seu " + resource.getDescription() + " foi doado! Yay!");
+                "O seu " + resource.getDescription() + " foi doado!");
     }
     
     public void sendSms(

@@ -32,6 +32,7 @@ import com.xnc.idonate.model.Blood;
 import com.xnc.idonate.model.BoneMarrow;
 import com.xnc.idonate.model.Organ;
 import com.xnc.idonate.model.Resource;
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -84,7 +85,14 @@ public class ResourceAccessor extends Accessor {
         preparedStatement.setString(2, resource.getDonationDate().toString());
         preparedStatement.setString(3, resource.getDescription());
         preparedStatement.setString(4, resource.getAcceptorCPF());
-        preparedStatement.setString(5, resource.getAcceptationDate().toString());
+        
+        Date date = resource.getAcceptationDate();
+        
+        if (date == null)
+            preparedStatement.setString(5, null);
+        else
+            preparedStatement.setString(5, resource.getAcceptationDate().toString());
+        
         preparedStatement.setInt(6, resource.getType().ordinal());
         
         boolean status = preparedStatement.execute();

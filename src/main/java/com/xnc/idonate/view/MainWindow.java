@@ -38,7 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -46,7 +50,7 @@ import javax.swing.DefaultListModel;
  */
 public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private DefaultListModel dlm;
-    private List<Person> pessoas;
+    private List<Person> personList;
     private Database database;
 
     private String hospitalID;
@@ -58,9 +62,55 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         database = new Database(Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
         this.initComponents();
         dlm = new DefaultListModel();
-        pessoas = new ArrayList<>();
+        dlm.add(0, " ");
+        personList = new ArrayList<>();
         this.hospitalID = hospitalID;
-        frameInitialization();      
+        frameInitialization();
+        
+        
+        DocumentListener documentListener = new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateFieldState();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateFieldState();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateFieldState();
+            }
+            
+            protected void updateFieldState() {
+                String text = textFieldSearch.getText();
+                
+                if (text.isEmpty() || text.equals(Constants.SearchPlaceholder))
+                    frameInitialization();
+                else {
+                    String query = text.toLowerCase();
+                    
+                    List<Person> temp = personList.stream()
+                            .filter(p -> p.getName().toLowerCase().contains(query)
+                                    || p.getCPF().toLowerCase().contains(query))
+                            .collect(Collectors.toList());
+                    
+                    dlm.clear();
+                    
+                    for (int i = 0; i < temp.size(); i++) {
+                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF() +
+                                " | " + temp.get(i).getPhone();
+                        dlm.add(i, r);
+                    }
+                    
+                    listPeople.setModel(dlm);
+                }
+            }
+        };
+        
+        textFieldSearch.getDocument().addDocumentListener(documentListener);
         textFieldSearch.addFocusListener(this);
     }
 
@@ -174,6 +224,11 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         jPanel9.add(buttonEdit);
 
         buttonRemove.setText("Remover");
+        buttonRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRemoveActionPerformed(evt);
+            }
+        });
         jPanel9.add(buttonRemove);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -211,7 +266,8 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        // TODO add your handling code here:
+        String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
+        PersonDialog.main(null, this, true, hospitalID, cpf);
     }//GEN-LAST:event_buttonEditActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
@@ -219,19 +275,39 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
-        PersonDialog.main(null, this, true);
+        PersonDialog.main(null, this, true, hospitalID, null);
     }//GEN-LAST:event_buttonAddActionPerformed
 
-    private void frameInitialization() {
+    private void buttonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveActionPerformed
+        String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
+        
+        try {
+            PersonAccessor pa = new PersonAccessor(database);
+            pa.remove(cpf);
+            frameInitialization();
+            textFieldSearch.setText(Constants.SearchPlaceholder);
+        }
+        catch(SQLException e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_buttonRemoveActionPerformed
+
+    public void frameInitialization() {
+        dlm.clear();
         PersonAccessor acessor = new PersonAccessor(database);
         try {
-            pessoas = acessor.getAll(hospitalID);
+            personList = acessor.getAll(hospitalID);
         } catch (SQLException ex) {
             System.out.println("Error [MainWindow.frameInitialization]: " + ex.getMessage());
         }
 
-        for (int i = 0; i < pessoas.size(); i++) {
-            String r = pessoas.get(i).getName() + " - " + pessoas.get(i).getCPF() + " - " + pessoas.get(i).getPhone();
+        for (int i = 0; i < personList.size(); i++) {
+            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF() +
+                    " | " + personList.get(i).getPhone();
             dlm.add(i, r);
         }
         listPeople.setModel(dlm);

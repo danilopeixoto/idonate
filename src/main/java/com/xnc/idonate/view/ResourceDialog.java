@@ -33,12 +33,14 @@ import com.xnc.idonate.model.BoneMarrow;
 import com.xnc.idonate.model.Organ;
 import com.xnc.idonate.model.Organ.OrganType;
 import com.xnc.idonate.model.Resource;
+import com.xnc.idonate.model.Resource.ResourceType;
 import java.text.ParseException;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
 import java.sql.Date;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -47,17 +49,22 @@ import java.util.List;
 public class ResourceDialog extends javax.swing.JDialog {
     private javax.swing.JDialog parentDialog;
     private List<Resource> resourceList;
+    private Integer index;
 
     /**
      * Creates new form PersonEditor
      */
     public ResourceDialog(java.awt.Frame parent, boolean modal,
-            javax.swing.JDialog dialogParent, List<Resource> resourceList) {
+            javax.swing.JDialog dialogParent, List<Resource> resourceList, Integer index) {
         super(parent, modal);
         this.parentDialog = dialogParent;
         this.initComponents();
 
         this.resourceList = resourceList;
+        this.index = index;
+        
+        if (index != null)
+            fetchResourceData();
 
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
@@ -105,9 +112,9 @@ public class ResourceDialog extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
-        jRadioButton1 = new javax.swing.JRadioButton();
-        jRadioButton2 = new javax.swing.JRadioButton();
-        jRadioButton3 = new javax.swing.JRadioButton();
+        radioButtonBlood = new javax.swing.JRadioButton();
+        radioButtonOrgan = new javax.swing.JRadioButton();
+        radioButtonBoneMarrow = new javax.swing.JRadioButton();
         tabbedPane = new javax.swing.JTabbedPane();
         panelBlood = new javax.swing.JPanel();
         jLabel21 = new javax.swing.JLabel();
@@ -197,39 +204,39 @@ public class ResourceDialog extends javax.swing.JDialog {
 
         jPanel5.setLayout(new java.awt.GridLayout(1, 3, 5, 5));
 
-        buttonGroupResource.add(jRadioButton1);
-        jRadioButton1.setSelected(true);
-        jRadioButton1.setText("Sangue");
-        jRadioButton1.setActionCommand("0");
-        jRadioButton1.setMinimumSize(null);
-        jRadioButton1.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroupResource.add(radioButtonBlood);
+        radioButtonBlood.setSelected(true);
+        radioButtonBlood.setText("Sangue");
+        radioButtonBlood.setActionCommand("0");
+        radioButtonBlood.setMinimumSize(null);
+        radioButtonBlood.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resourceTypeChanged(evt);
             }
         });
-        jPanel5.add(jRadioButton1);
+        jPanel5.add(radioButtonBlood);
 
-        buttonGroupResource.add(jRadioButton2);
-        jRadioButton2.setText("Órgão");
-        jRadioButton2.setActionCommand("1");
-        jRadioButton2.setMinimumSize(null);
-        jRadioButton2.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroupResource.add(radioButtonOrgan);
+        radioButtonOrgan.setText("Órgão");
+        radioButtonOrgan.setActionCommand("1");
+        radioButtonOrgan.setMinimumSize(null);
+        radioButtonOrgan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resourceTypeChanged(evt);
             }
         });
-        jPanel5.add(jRadioButton2);
+        jPanel5.add(radioButtonOrgan);
 
-        buttonGroupResource.add(jRadioButton3);
-        jRadioButton3.setText("Medula Óssea");
-        jRadioButton3.setActionCommand("2");
-        jRadioButton3.setMinimumSize(null);
-        jRadioButton3.addActionListener(new java.awt.event.ActionListener() {
+        buttonGroupResource.add(radioButtonBoneMarrow);
+        radioButtonBoneMarrow.setText("Medula Óssea");
+        radioButtonBoneMarrow.setActionCommand("2");
+        radioButtonBoneMarrow.setMinimumSize(null);
+        radioButtonBoneMarrow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 resourceTypeChanged(evt);
             }
         });
-        jPanel5.add(jRadioButton3);
+        jPanel5.add(radioButtonBoneMarrow);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -342,6 +349,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBlood.add(jLabel25, gridBagConstraints);
 
+        formattedTextAcceptorCPFBlood.setEditable(false);
         formattedTextAcceptorCPFBlood.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFBlood.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,6 +374,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBlood.add(jLabel26, gridBagConstraints);
 
+        datePickerAcceptionBlood.setEditable(false);
         datePickerAcceptionBlood.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -474,6 +483,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelOrgan.add(jLabel13, gridBagConstraints);
 
+        formattedTextAcceptorCPFOrgan.setEditable(false);
         formattedTextAcceptorCPFOrgan.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFOrgan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -498,6 +508,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelOrgan.add(jLabel14, gridBagConstraints);
 
+        datePickerAcceptionOrgan.setEditable(false);
         datePickerAcceptionOrgan.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -609,6 +620,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBoneMarrow.add(jLabel19, gridBagConstraints);
 
+        formattedTextAcceptorCPFBoneMarrow.setEditable(false);
         formattedTextAcceptorCPFBoneMarrow.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFBoneMarrow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -633,6 +645,7 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBoneMarrow.add(jLabel20, gridBagConstraints);
 
+        datePickerAcceptionBoneMarrow.setEditable(false);
         datePickerAcceptionBoneMarrow.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -744,6 +757,90 @@ public class ResourceDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_formattedTextREDOMEBoneMarrowActionPerformed
 
+    private void fetchResourceData() {
+        Resource resource = resourceList.get(index);
+        ResourceType type = resource.getType();
+        
+        String cpf = null;
+        Date date = null;
+        
+        switch (type) {
+            case Blood:
+                tabbedPane.setSelectedIndex(0);
+                buttonGroupResource.setSelected(radioButtonBlood.getModel(), true);
+                
+                datePickerDonationBlood.setDate(resource.getDonationDate());
+                textAreaDescriptionBlood.setText(resource.getDescription());
+
+                cpf = resource.getAcceptorCPF();
+
+                if (cpf != null)
+                    formattedTextAcceptorCPFBlood.setValue(cpf);
+
+                date = resource.getAcceptationDate();
+
+                if (date != null)
+                    datePickerAcceptionBlood.setDate(date);
+                
+                Blood blood = (Blood)resource;
+                
+                comboBoxTypeBlood.setSelectedIndex(
+                        Utility.bloodTypeToComboBoxIndex(blood.getBloodType()));
+                
+                spinnerVolumeBlood.setValue(blood.getVolume());
+                
+                break;
+            case Organ:
+                tabbedPane.setSelectedIndex(1);
+                buttonGroupResource.setSelected(radioButtonOrgan.getModel(), true);
+                
+                datePickerDonationOrgan.setDate(resource.getDonationDate());
+                textAreaDescriptionOrgan.setText(resource.getDescription());
+
+                cpf = resource.getAcceptorCPF();
+
+                if (cpf != null)
+                    formattedTextAcceptorCPFOrgan.setValue(cpf);
+
+                date = resource.getAcceptationDate();
+
+                if (date != null)
+                    datePickerAcceptionOrgan.setDate(date);
+                
+                Organ organ = (Organ)resource;
+                
+                comboBoxTypeOrgan.setSelectedIndex(
+                        Utility.organTypeToComboBoxIndex(organ.getOrganType()));
+                
+                spinnerWeightOrgan.setValue(organ.getWeight());
+                
+                break;
+            case BoneMarrow:
+                tabbedPane.setSelectedIndex(2);
+                buttonGroupResource.setSelected(radioButtonBoneMarrow.getModel(), true);
+                
+                datePickerDonationBoneMarrow.setDate(resource.getDonationDate());
+                textAreaDescriptionBoneMarrow.setText(resource.getDescription());
+
+                cpf = resource.getAcceptorCPF();
+
+                if (cpf != null)
+                    formattedTextAcceptorCPFBoneMarrow.setValue(cpf);
+
+                date = resource.getAcceptationDate();
+
+                if (date != null)
+                    datePickerAcceptionBoneMarrow.setDate(date);
+                
+                BoneMarrow boneMarrow = (BoneMarrow)resource;
+                
+                formattedTextHLABoneMarrow.setValue(boneMarrow.getHLA());
+                formattedTextREDOMEBoneMarrow.setValue(boneMarrow.getREDOME());
+                
+                break;
+        }
+    }
+    
     private void resourceTypeChanged(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resourceTypeChanged
         String selectedOption = this.buttonGroupResource.getSelection().getActionCommand();
 
@@ -768,9 +865,34 @@ public class ResourceDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_formattedTextAcceptorCPFBloodActionPerformed
 
+    private boolean isEmpty(int index) {
+        switch (index) {
+            case 0:
+                return datePickerDonationBlood.getDate() == null ||
+                       textAreaDescriptionBlood.getText().isEmpty();
+            case 1:
+                return datePickerDonationOrgan.getDate() == null ||
+                       textAreaDescriptionOrgan.getText().isEmpty();
+            case 2:
+                return datePickerDonationBoneMarrow.getDate() == null ||
+                       textAreaDescriptionBoneMarrow.getText().isEmpty() ||
+                       ((String)formattedTextHLABoneMarrow.getValue()).isEmpty() ||
+                       ((String)formattedTextREDOMEBoneMarrow.getValue()).isEmpty();
+            default:
+                throw new UnsupportedOperationException();
+        }
+    }
+    
     private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
+        int index = this.tabbedPane.getSelectedIndex();
+        
+        if (isEmpty(index)) {
+            JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos.");
+            return;
+        }
+        
         Resource resource = null;
-        switch (this.tabbedPane.getSelectedIndex()) {
+        switch (index) {
             case 0: {
                 final Blood blood = new Blood();
 
@@ -779,13 +901,10 @@ public class ResourceDialog extends javax.swing.JDialog {
                 final BloodType bloodType = Utility.comboBoxIndexToBloodType(this.comboBoxTypeBlood.getSelectedIndex());
 
                 final float volume = Float.parseFloat(this.spinnerVolumeBlood.getValue().toString());
-                final String cpf = this.formattedTextAcceptorCPFBlood.getText();
-                if (this.datePickerAcceptionBlood.getDate() != null) {
-                    final Date acceptionDate = new Date(this.datePickerAcceptionBlood.getDate().getTime());
-                    blood.setAcceptationDate(acceptionDate);
-                }
-
-                blood.setAcceptorCPF(cpf);
+                
+                blood.setAcceptationDate(null);
+                blood.setAcceptorCPF(null);
+                
                 blood.setBloodType(bloodType);
                 blood.setDescription(description);
                 blood.setDonationDate(date);
@@ -802,13 +921,11 @@ public class ResourceDialog extends javax.swing.JDialog {
                 final OrganType organType = Utility.comboBoxIndexToOrganType(this.comboBoxTypeOrgan.getSelectedIndex());
 
                 final float weight = Float.parseFloat(this.spinnerWeightOrgan.getValue().toString());
-                final String cpf = this.formattedTextAcceptorCPFOrgan.getText();
-                if (this.datePickerAcceptionOrgan.getDate() != null) {
-                    final Date acceptionDate = new Date(this.datePickerAcceptionOrgan.getDate().getTime());
-                    organ.setAcceptationDate(acceptionDate);
-                }
-
-                organ.setAcceptorCPF(cpf);
+                
+                
+                organ.setAcceptationDate(null);
+                organ.setAcceptorCPF(null);
+                
                 organ.setDescription(description);
                 organ.setDonationDate(date);
                 organ.setType(organType);
@@ -824,13 +941,10 @@ public class ResourceDialog extends javax.swing.JDialog {
                 final String description = this.textAreaDescriptionBoneMarrow.getText();
                 final String hla = this.formattedTextHLABoneMarrow.getText();
                 final String redome = this.formattedTextREDOMEBoneMarrow.getText();
-                final String cpf = this.formattedTextAcceptorCPFBoneMarrow.getText();
-                if (this.datePickerAcceptionBoneMarrow.getDate() != null) {
-                    final Date acceptionDate = new Date(this.datePickerAcceptionBoneMarrow.getDate().getTime());
-                    bm.setAcceptationDate(acceptionDate);
-                }
-
-                bm.setAcceptorCPF(cpf);
+                
+                bm.setAcceptationDate(null);
+                bm.setAcceptorCPF(null);
+                
                 bm.setDescription(description);
                 bm.setDonationDate(date);
                 bm.setHLA(hla);
@@ -845,8 +959,12 @@ public class ResourceDialog extends javax.swing.JDialog {
                 throw new UnsupportedOperationException();
         }
 
-        if (resource != null)
-            resourceList.add(resource);
+        if (resource != null) {
+            if (this.index != null)
+                resourceList.set(index, resource);
+            else
+                resourceList.add(resource);
+        }
         
         PersonDialog dialog = (PersonDialog)parentDialog;
         dialog.updateResourceList();
@@ -861,7 +979,8 @@ public class ResourceDialog extends javax.swing.JDialog {
      * @param args the command line arguments
      */
     public static void main(String args[], java.awt.Frame parent, boolean modal,
-            javax.swing.JDialog dialogParent, List<Resource> resourceList) {
+            javax.swing.JDialog dialogParent, List<Resource> resourceList,
+            Integer index) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -875,7 +994,8 @@ public class ResourceDialog extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ResourceDialog dialog = new ResourceDialog(parent, modal, dialogParent, resourceList);
+                ResourceDialog dialog = new ResourceDialog(parent, modal,
+                        dialogParent, resourceList, index);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -931,9 +1051,6 @@ public class ResourceDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JRadioButton jRadioButton1;
-    private javax.swing.JRadioButton jRadioButton2;
-    private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane5;
@@ -941,6 +1058,9 @@ public class ResourceDialog extends javax.swing.JDialog {
     private javax.swing.JPanel panelBlood;
     private javax.swing.JPanel panelBoneMarrow;
     private javax.swing.JPanel panelOrgan;
+    private javax.swing.JRadioButton radioButtonBlood;
+    private javax.swing.JRadioButton radioButtonBoneMarrow;
+    private javax.swing.JRadioButton radioButtonOrgan;
     private javax.swing.JSpinner spinnerVolumeBlood;
     private javax.swing.JSpinner spinnerWeightOrgan;
     private javax.swing.JTabbedPane tabbedPane;
