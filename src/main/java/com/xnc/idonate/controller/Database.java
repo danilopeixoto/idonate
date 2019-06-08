@@ -28,11 +28,18 @@
 
 package com.xnc.idonate.controller;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.stream.Collectors;
 
 public class Database {
     private final String username;
@@ -51,6 +58,47 @@ public class Database {
         
         this.url = "jdbc:mysql://localhost:3306/" + name;
         this.connection = null;
+    }
+    
+    public void createDefaultDatabase() throws SQLException {
+        String url = "jdbc:mysql://localhost:3306/";
+        Connection connection = DriverManager.getConnection(url, username, password);
+        
+        PreparedStatement preparedStatement = connection.prepareStatement(
+                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = ?;");
+        
+        preparedStatement.setString(1, name);
+        
+        ResultSet result = preparedStatement.executeQuery();
+        
+        if (result.next()) {
+             boolean hasDatabase = result.getInt(1) > 0;
+             
+             if (!hasDatabase) {
+                Statement statement = connection.createStatement();
+            
+                try {
+                    String path = getClass().getResource("/database.sql").getPath();
+                    BufferedReader buffer = new BufferedReader(
+                            new InputStreamReader(new FileInputStream(path), "UTF-8"));
+                    String sql = buffer.lines().collect(Collectors.joining("\n"));
+                    String[] statements = sql.split(";");
+                    
+                    for (String stm : statements)
+                        statement.executeUpdate(stm + ";");
+                }
+                catch (IOException exception) {
+                    connection.close();
+                    throw new SQLException();
+                }
+            }
+        }
+        else {
+            connection.close();
+            throw new SQLException();
+        }
+        
+        connection.close();
     }
     
     public void connect() throws SQLException {

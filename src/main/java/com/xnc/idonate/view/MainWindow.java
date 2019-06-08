@@ -30,6 +30,7 @@ package com.xnc.idonate.view;
 import com.xnc.idonate.controller.Database;
 import com.xnc.idonate.controller.PersonAccessor;
 import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Credentials;
 import com.xnc.idonate.model.Person;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
@@ -59,14 +60,15 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
      * Creates new form IDonateViewer
      */
     public MainWindow(String hospitalID) {
-        database = new Database(Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
+        database = new Database(
+                Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
+        
         this.initComponents();
         dlm = new DefaultListModel();
         dlm.add(0, " ");
         personList = new ArrayList<>();
         this.hospitalID = hospitalID;
         frameInitialization();
-        
         
         DocumentListener documentListener = new DocumentListener() {
             @Override

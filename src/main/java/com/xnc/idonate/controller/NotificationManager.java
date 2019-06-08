@@ -5,35 +5,19 @@ import com.xnc.idonate.model.Resource;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 
-/**
- *
- * @author Heitor
- */
 public class NotificationManager {
     private final String accountSid;
     private final String authToken;
     private final PhoneNumber sender;
     
-    public NotificationManager() throws IOException {
-        final String path = this.getClass().getClassLoader().getResource("services.auth").getPath();
-        BufferedReader br = new BufferedReader(new FileReader(path));
-        
-        this.accountSid = br.readLine();
-        this.authToken = br.readLine();
-        this.sender = this.properNumber(br.readLine());
-    }
-    
     public NotificationManager(
             final String accountSid,
-            final String authToken,
-            final PhoneNumber sender) {
+            final String accountPhone,
+            final String authToken) {
         this.accountSid = accountSid;
+        this.sender = this.properNumber(accountPhone);
         this.authToken = authToken;
-        this.sender = sender;
     }
     
     public void sendDefaultSmsToDonor(

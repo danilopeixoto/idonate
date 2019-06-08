@@ -30,7 +30,7 @@ package com.xnc.idonate.view;
 
 import com.xnc.idonate.controller.Database;
 import com.xnc.idonate.controller.HospitalAccessor;
-import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Credentials;
 import com.xnc.idonate.model.Hospital;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
@@ -47,7 +47,7 @@ public class LoginWindow extends javax.swing.JFrame {
     public LoginWindow() {
         this.initComponents();
         database = new Database(
-                Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
+                Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
     }
 
     /**

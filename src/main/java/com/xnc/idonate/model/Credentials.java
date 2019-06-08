@@ -26,32 +26,30 @@
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package com.xnc.idonate.controller;
+package com.xnc.idonate.model;
 
-import com.bulenkov.darcula.DarculaLaf;
-import com.xnc.idonate.model.Credentials;
-import com.xnc.idonate.view.LoginWindow;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import javax.swing.UIManager;
 
-public class Application {
-    public static void main(String[] arguments) throws IOException {
-        try {
-            UIManager.setLookAndFeel(new DarculaLaf());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+public class Credentials {
+    public static String DatabaseUser = "";
+    public static String DatabasePassword = "";
+    public static String DatabaseName = "";
+    public static String AccountSID = "";
+    public static String AccountPhone = "";
+    public static String AuthenticationToken = "";
+    
+    public static void load(String filename) throws FileNotFoundException, IOException {
+        String path = Credentials.class.getResource(filename).getPath();
+        BufferedReader buffer = new BufferedReader(new FileReader(path));
         
-        try {
-            Credentials.load("/credentials.service");
-            
-            Database database = new Database(
-                Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
-            
-            database.createDefaultDatabase();
-            LoginWindow.main(arguments);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        DatabaseUser = buffer.readLine();
+        DatabasePassword = buffer.readLine();
+        DatabaseName =  buffer.readLine();
+        AccountSID = buffer.readLine();
+        AccountPhone = buffer.readLine();
+        AuthenticationToken = buffer.readLine();
     }
 }

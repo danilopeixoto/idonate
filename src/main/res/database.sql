@@ -1,4 +1,3 @@
-DROP SCHEMA IF EXISTS idonate;
 CREATE SCHEMA idonate;
 
 USE idonate;
@@ -32,6 +31,7 @@ CREATE TABLE people (
     CONSTRAINT fk_person_hospital_id
         FOREIGN KEY (hospital_id)
         REFERENCES hospitals (id)
+        ON DELETE CASCADE
         ON UPDATE CASCADE
 );
 
@@ -49,11 +49,13 @@ CREATE TABLE resources (
     CONSTRAINT fk_resource_donor_cpf
         FOREIGN KEY (donor_cpf)
         REFERENCES people (cpf)
+        ON DELETE CASCADE
         ON UPDATE CASCADE,
 
     CONSTRAINT fk_resource_acceptor_cpf
         FOREIGN KEY (acceptor_cpf)
         REFERENCES people (cpf)
+        ON UPDATE CASCADE
 );
 
 CREATE TABLE organs (
@@ -97,3 +99,9 @@ CREATE TABLE bone_marrows (
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
+
+INSERT INTO hospitals(id, password, name, address, phone, email)
+VALUES (
+    'einstein', '12345', 'Hospital Israelita Albert Einstein',
+    'Av. Albert Einstein, 627 - Jardim Leonor, São Paulo - SP',
+    '(11) 2151-1233', 'atendimento@einstein.com');

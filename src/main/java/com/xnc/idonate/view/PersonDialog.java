@@ -33,11 +33,11 @@ import com.xnc.idonate.controller.PersonAccessor;
 import com.xnc.idonate.controller.ResourceAccessor;
 import com.xnc.idonate.model.Blood;
 import com.xnc.idonate.model.Constants;
+import com.xnc.idonate.model.Credentials;
 import com.xnc.idonate.model.Organ;
 import com.xnc.idonate.model.Person;
 import com.xnc.idonate.model.Person.Sex;
 import com.xnc.idonate.model.Resource;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -71,15 +71,11 @@ public class PersonDialog extends javax.swing.JDialog {
         this.hospitalID = hospitalID;
         this.personCPF = personCPF;
         
-        try {
-            this.nmanager = new NotificationManager();
-        }
-        catch(IOException e) {
-            e.printStackTrace();
-        }
+        this.nmanager = new NotificationManager(
+                Credentials.AccountSID, Credentials.AccountPhone, Credentials.AuthenticationToken);
 
         database = new Database(
-                Constants.DatabaseUser, Constants.DatabasePassword, Constants.DatabaseName);
+                Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
 
         if (personCPF != null)
             fetchPersonData();
