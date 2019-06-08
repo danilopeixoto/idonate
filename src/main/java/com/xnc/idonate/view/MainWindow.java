@@ -36,8 +36,6 @@ import java.awt.event.FocusListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -49,9 +47,11 @@ import javax.swing.event.DocumentListener;
  * @author Heitor
  */
 public class MainWindow extends javax.swing.JFrame implements FocusListener {
+
     private DefaultListModel dlm;
     private List<Person> personList;
     private Database database;
+    private int controller = 0;
 
     private String hospitalID;
 
@@ -66,8 +66,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         personList = new ArrayList<>();
         this.hospitalID = hospitalID;
         frameInitialization();
-        
-        
+
         DocumentListener documentListener = new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -83,33 +82,33 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
             public void changedUpdate(DocumentEvent e) {
                 updateFieldState();
             }
-            
+
             protected void updateFieldState() {
                 String text = textFieldSearch.getText();
-                
-                if (text.isEmpty() || text.equals(Constants.SearchPlaceholder))
+
+                if (text.isEmpty() || text.equals(Constants.SearchPlaceholder)) {
                     frameInitialization();
-                else {
+                } else {
                     String query = text.toLowerCase();
-                    
+
                     List<Person> temp = personList.stream()
                             .filter(p -> p.getName().toLowerCase().contains(query)
-                                    || p.getCPF().toLowerCase().contains(query))
+                            || p.getCPF().toLowerCase().contains(query))
                             .collect(Collectors.toList());
-                    
+
                     dlm.clear();
-                    
+
                     for (int i = 0; i < temp.size(); i++) {
-                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF() +
-                                " | " + temp.get(i).getPhone();
+                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF()
+                                + " | " + temp.get(i).getPhone();
                         dlm.add(i, r);
                     }
-                    
+
                     listPeople.setModel(dlm);
                 }
             }
         };
-        
+
         textFieldSearch.getDocument().addDocumentListener(documentListener);
         textFieldSearch.addFocusListener(this);
     }
@@ -266,7 +265,8 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
+        controller = 1;
+        String cpf = listPeople.getSelectedValue().split("\\|")[1].trim();
         PersonDialog.main(null, this, true, hospitalID, cpf);
     }//GEN-LAST:event_buttonEditActionPerformed
 
@@ -275,19 +275,19 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
+        controller = 0;
         PersonDialog.main(null, this, true, hospitalID, null);
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private void buttonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveActionPerformed
         String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
-        
+
         try {
             PersonAccessor pa = new PersonAccessor(database);
             pa.remove(cpf);
             frameInitialization();
             textFieldSearch.setText(Constants.SearchPlaceholder);
-        }
-        catch(SQLException e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(
                     this,
                     "Houve um erro ao acessar o banco de dados. Tente novamente.",
@@ -306,8 +306,8 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         }
 
         for (int i = 0; i < personList.size(); i++) {
-            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF() +
-                    " | " + personList.get(i).getPhone();
+            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF()
+                    + " | " + personList.get(i).getPhone();
             dlm.add(i, r);
         }
         listPeople.setModel(dlm);
@@ -351,13 +351,19 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (textFieldSearch.getText().equals(Constants.SearchPlaceholder))
+        if (textFieldSearch.getText().equals(Constants.SearchPlaceholder)) {
             textFieldSearch.setText(Constants.EmptyString);
+        }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        if (textFieldSearch.getText().equals(Constants.EmptyString))
+        if (textFieldSearch.getText().equals(Constants.EmptyString)) {
             textFieldSearch.setText(Constants.SearchPlaceholder);
+        }
+    }
+
+    public int getController() {
+        return controller;
     }
 }

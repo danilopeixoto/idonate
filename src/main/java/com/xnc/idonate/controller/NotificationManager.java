@@ -20,7 +20,7 @@ public class NotificationManager {
     
     public NotificationManager() throws IOException {
         final String path = this.getClass().getClassLoader().getResource("services.auth").getPath();
-        BufferedReader br = new BufferedReader(new FileReader(path));
+        final BufferedReader br = new BufferedReader(new FileReader(path));
         
         this.accountSid = br.readLine();
         this.authToken = br.readLine();
@@ -41,7 +41,7 @@ public class NotificationManager {
             final Resource resource) {
         this.sendSms(
                 person,
-                "O seu " + resource.getDescription() + " foi doado!");
+                "O seu " + resource.toString() + " foi doado!");
     }
     
     public void sendSms(
@@ -50,12 +50,12 @@ public class NotificationManager {
         Twilio.init(this.accountSid, this.authToken);
 
         final Message smsMessage = Message.creator(
-                this.properNumber(person.getPhone()),
+                this.properNumber("+55" + person.getPhone()),
                 this.sender,
                 message).create();
     }
     
     private PhoneNumber properNumber(final String number) {
-        return new PhoneNumber("+55" + number.replace("( -)", ""));
+        return new PhoneNumber(number.replace("( -)", ""));
     }
 }

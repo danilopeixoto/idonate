@@ -1,4 +1,4 @@
 target/
-
+services.auth
 nb-configuration.xml
 nbactions.xml
