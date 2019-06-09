@@ -80,6 +80,34 @@ public class PersonAccessor extends Accessor {
 
         return status;
     }
+    
+    public boolean update(String oldCpf, Person person) throws SQLException {
+        database.connect();
+
+        preparedStatement = database.createPreparedStatement(
+                "UPDATE people SET cpf=?, name=?, address=?, phone=?, email=?, age=?,"
+                + "sex=?, weight=?, blood_type=?, medical_conditions=?, hospital_id=?"
+                + "WHERE cpf=?");
+
+        preparedStatement.setString(1, person.getCPF());
+        preparedStatement.setString(2, person.getName());
+        preparedStatement.setString(3, person.getAddress());
+        preparedStatement.setString(4, person.getPhone());
+        preparedStatement.setString(5, person.getEmail());
+        preparedStatement.setInt(6, person.getAge());
+        preparedStatement.setInt(7, person.getSex().ordinal());
+        preparedStatement.setFloat(8, person.getWeight());
+        preparedStatement.setInt(9, person.getBloodType().ordinal());
+        preparedStatement.setString(10, person.getMedicalConditions());
+        preparedStatement.setString(11, person.getHospitalID());
+        preparedStatement.setString(12, oldCpf);
+
+        boolean status = preparedStatement.execute();
+
+        database.disconnect();
+
+        return status;
+    }
 
     public boolean remove(String cpf) throws SQLException {
         database.connect();

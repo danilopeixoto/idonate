@@ -32,10 +32,11 @@ import com.bulenkov.darcula.DarculaLaf;
 import com.xnc.idonate.model.Credentials;
 import com.xnc.idonate.view.LoginWindow;
 import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.UIManager;
 
 public class Application {
-    public static void main(String[] arguments) throws IOException {
+    public static void main(String[] arguments) throws SQLException, IOException {
         try {
             UIManager.setLookAndFeel(new DarculaLaf());
         } catch (Exception e) {

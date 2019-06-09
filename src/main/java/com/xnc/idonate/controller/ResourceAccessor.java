@@ -25,7 +25,6 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
 package com.xnc.idonate.controller;
 
 import com.xnc.idonate.model.Blood;
@@ -35,8 +34,14 @@ import com.xnc.idonate.model.Resource;
 import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ResourceAccessor extends Accessor {
+
+//    public ResourceAccessor() {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     private enum ResourceAttributes {
         None,
         ID,
@@ -68,222 +73,196 @@ public class ResourceAccessor extends Accessor {
         HLA,
         REDOME
     }
-    
+
     public ResourceAccessor(Database database) {
         super(database);
     }
-    
+
     public boolean add(Resource resource) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
-                "INSERT INTO resources(donor_cpf, donation_date, description," +
-                "acceptor_cpf, acceptation_date, type) " +
-                "VALUES (?, ?, ?, ?, ?, ?);");
-        
+                "INSERT INTO resources(donor_cpf, donation_date, description,"
+                + "acceptor_cpf, acceptation_date, type) "
+                + "VALUES (?, ?, ?, ?, ?, ?);");
+
         preparedStatement.setString(1, resource.getDonorCPF());
-        preparedStatement.setString(2, resource.getDonationDate().toString());
+        preparedStatement.setDate(2, resource.getDonationDate());
         preparedStatement.setString(3, resource.getDescription());
         preparedStatement.setString(4, resource.getAcceptorCPF());
-        
-        Date date = resource.getAcceptationDate();
-        
-        if (date == null)
-            preparedStatement.setString(5, null);
-        else
-            preparedStatement.setString(5, resource.getAcceptationDate().toString());
-        
+        preparedStatement.setDate(5, resource.getAcceptationDate());
         preparedStatement.setInt(6, resource.getType().ordinal());
-        
+
         boolean status = preparedStatement.execute();
-        
-        if (!status) {
+
+        /*if (!status) {
             database.disconnect();
             return false;
-        }
-        
+        }*/
+
+        statement = database.createStatement();
         ResultSet currentIDResult = statement.executeQuery("SELECT LAST_INSERT_ID();");
         int id = 0;
-        
-        if (currentIDResult.next())
+
+        if (currentIDResult.next()) {
             id = currentIDResult.getInt(1);
-        
+        }
+
         if (id == 0) {
             database.disconnect();
             return false;
         }
-        
+
         resource.setID(id);
-        
+
         status = false;
-        
+
         switch (resource.getType()) {
             case Organ:
-                Organ organ = (Organ)resource;
-                
+                Organ organ = (Organ) resource;
+
                 preparedStatement = database.createPreparedStatement(
-                        "INSERT INTO organs(resource_id, type, weight) " +
-                        "VALUES (?, ?, ?);");
-                
+                        "INSERT INTO organs(resource_id, type, weight) "
+                        + "VALUES (?, ?, ?);");
+
                 preparedStatement.setInt(1, organ.getID());
                 preparedStatement.setInt(2, organ.getOrganType().ordinal());
                 preparedStatement.setFloat(3, organ.getWeight());
-                
+
                 status = preparedStatement.execute();
-                
+
                 break;
-                
+
             case Blood:
-                Blood blood = (Blood)resource;
-                
+                Blood blood = (Blood) resource;
+
                 preparedStatement = database.createPreparedStatement(
-                        "INSERT INTO bloods(resource_id, type, volume) " +
-                        "VALUES (?, ?, ?);");
-                
+                        "INSERT INTO bloods(resource_id, type, volume) "
+                        + "VALUES (?, ?, ?);");
+
                 preparedStatement.setInt(1, blood.getID());
                 preparedStatement.setInt(2, blood.getBloodType().ordinal());
                 preparedStatement.setFloat(3, blood.getVolume());
-                
+
                 status = preparedStatement.execute();
-                
+
                 break;
-                
+
             case BoneMarrow:
-                BoneMarrow boneMarrow = (BoneMarrow)resource;
-                
+                BoneMarrow boneMarrow = (BoneMarrow) resource;
+
                 preparedStatement = database.createPreparedStatement(
-                        "INSERT INTO bone_marrows(resource_id, hla, redome) " +
-                        "VALUES (?, ?, ?);");
-                
+                        "INSERT INTO bone_marrows(resource_id, hla, redome) "
+                        + "VALUES (?, ?, ?);");
+
                 preparedStatement.setInt(1, boneMarrow.getID());
                 preparedStatement.setString(2, boneMarrow.getHLA());
                 preparedStatement.setString(3, boneMarrow.getREDOME());
-                
+
                 status = preparedStatement.execute();
-                
+
                 break;
-                
+
             default:
                 break;
         }
-        
+
         database.disconnect();
-        
+
         return status;
     }
+
     public boolean remove(int id) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
-                "SELECT * FROM resources WHERE id = ?;");
-        
+                "DELETE FROM resources WHERE id = ?;");
+
         preparedStatement.setInt(1, id);
-        
-        ResultSet result = preparedStatement.executeQuery();
-        
-        if (!result.next()) {
-            database.disconnect();
-            return false;
-        }
-        
-        Resource.ResourceType type = Resource.ResourceType.values()[result.getInt(ResourceAttributes.Type.ordinal())];
-        boolean status = false;
-        
-        switch (type) {
-            case Organ:
-                preparedStatement = database.createPreparedStatement(
-                        "DELETE FROM organs WHERE id = ?;");
-        
-                preparedStatement.setInt(1, id);
-                
-                status = preparedStatement.execute();
-                
-                break;
-                
-            case Blood:
-                preparedStatement = database.createPreparedStatement(
-                        "DELETE FROM bloods WHERE id = ?;");
-        
-                preparedStatement.setInt(1, id);
-                
-                status = preparedStatement.execute();
-                
-                break;
-                
-            case BoneMarrow:
-                 preparedStatement = database.createPreparedStatement(
-                        "DELETE FROM bone_marrows WHERE id = ?;");
-        
-                preparedStatement.setInt(1, id);
-                
-                status = preparedStatement.execute();
-                
-                break;
-                
-            default:
-                break;
-        }
-        
+        boolean status = preparedStatement.execute();
+
         database.disconnect();
-        
+
         return status;
     }
+
     public boolean has(int id) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
-            "SELECT * FROM resources WHERE id = ?");
-        
+                "SELECT * FROM resources WHERE id = ?");
+
         preparedStatement.setInt(1, id);
-        
+
         ResultSet result = preparedStatement.executeQuery();
-        
+
         if (!result.next()) {
             database.disconnect();
             return false;
         }
-        
+
         int resourceID = result.getInt(ResourceAttributes.ID.ordinal());
-        
+
         database.disconnect();
-        
+
         return resourceID != 0;
     }
+
+    public List<Resource> getAll(String cpf) throws SQLException {
+        database.connect();
+
+        List<Resource> all = new ArrayList<>();
+
+        preparedStatement = database.createPreparedStatement(
+                "SELECT * FROM resources WHERE donor_cpf = ?;");
+        preparedStatement.setString(1, cpf);
+
+        ResultSet result = preparedStatement.executeQuery();
+
+        while (result.next()) {
+            int resourceID = result.getInt(ResourceAttributes.ID.ordinal());
+            all.add(this.get(resourceID));
+        }
+
+        database.disconnect();
+        return all;
+    }
+
     public Resource get(int id) throws SQLException {
         database.connect();
-        
+
         preparedStatement = database.createPreparedStatement(
                 "SELECT * FROM resources WHERE id = ?;");
-        
+
         preparedStatement.setInt(1, id);
-        
+
         ResultSet result = preparedStatement.executeQuery();
-        
+
         if (!result.next()) {
             database.disconnect();
             return null;
         }
-        
+
         int resourceID = result.getInt(ResourceAttributes.ID.ordinal());
-        
+
         if (resourceID == 0) {
             database.disconnect();
             return null;
         }
-        
+
         Resource.ResourceType type = Resource.ResourceType.values()[result.getInt(ResourceAttributes.Type.ordinal())];
         Resource resource = null;
-        
+
         switch (type) {
             case Organ:
                 preparedStatement = database.createPreparedStatement(
-                        "SELECT * FROM organs WHERE id = ?;");
-                
+                        "SELECT * FROM organs WHERE resource_id = ?;");
+
                 preparedStatement.setInt(1, id);
-                
+
                 ResultSet organResult = preparedStatement.executeQuery();
-                
-                if (result.next()) {
+
+                if (organResult.next()) {
                     resource = new Organ(
                             result.getInt(ResourceAttributes.ID.ordinal()),
                             result.getString(ResourceAttributes.DonorCPF.ordinal()),
@@ -294,18 +273,18 @@ public class ResourceAccessor extends Accessor {
                             result.getString(ResourceAttributes.AcceptorCPF.ordinal()),
                             result.getDate(ResourceAttributes.AcceptationDate.ordinal()));
                 }
-                
+
                 break;
-                
+
             case Blood:
                 preparedStatement = database.createPreparedStatement(
-                        "SELECT * FROM bloods WHERE id = ?;");
-                
+                        "SELECT * FROM bloods WHERE resource_id = ?;");
+
                 preparedStatement.setInt(1, id);
-                
+
                 ResultSet bloodResult = preparedStatement.executeQuery();
-                
-                if (result.next()) {
+
+                if (bloodResult.next()) {
                     resource = new Blood(
                             result.getInt(ResourceAttributes.ID.ordinal()),
                             result.getString(ResourceAttributes.DonorCPF.ordinal()),
@@ -316,18 +295,18 @@ public class ResourceAccessor extends Accessor {
                             result.getString(ResourceAttributes.AcceptorCPF.ordinal()),
                             result.getDate(ResourceAttributes.AcceptationDate.ordinal()));
                 }
-                
+
                 break;
-                
+
             case BoneMarrow:
                 preparedStatement = database.createPreparedStatement(
-                        "SELECT * FROM bone_marrows WHERE id = ?;");
-                
+                        "SELECT * FROM bone_marrows WHERE resource_id = ?;");
+
                 preparedStatement.setInt(1, id);
-                
+
                 ResultSet boneMarrowResult = preparedStatement.executeQuery();
-                
-                if (result.next()) {
+
+                if (boneMarrowResult.next()) {
                     resource = new BoneMarrow(
                             result.getInt(ResourceAttributes.ID.ordinal()),
                             result.getString(ResourceAttributes.DonorCPF.ordinal()),
@@ -338,15 +317,15 @@ public class ResourceAccessor extends Accessor {
                             result.getString(ResourceAttributes.AcceptorCPF.ordinal()),
                             result.getDate(ResourceAttributes.AcceptationDate.ordinal()));
                 }
-                
+
                 break;
-                
+
             default:
                 break;
         }
-        
+
         database.disconnect();
-        
+
         return resource;
     }
 }

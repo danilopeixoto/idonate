@@ -25,6 +25,7 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.controller.Database;
@@ -37,18 +38,15 @@ import java.awt.event.FocusListener;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
-/**
- *
- * @author Heitor
- */
 public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private DefaultListModel dlm;
     private List<Person> personList;
@@ -85,35 +83,52 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
             public void changedUpdate(DocumentEvent e) {
                 updateFieldState();
             }
-            
+
             protected void updateFieldState() {
                 String text = textFieldSearch.getText();
-                
-                if (text.isEmpty() || text.equals(Constants.SearchPlaceholder))
+
+                if (text.isEmpty() || text.equals(Constants.SearchPlaceholder)) {
                     frameInitialization();
-                else {
+                } else {
                     String query = text.toLowerCase();
-                    
+
                     List<Person> temp = personList.stream()
                             .filter(p -> p.getName().toLowerCase().contains(query)
-                                    || p.getCPF().toLowerCase().contains(query))
+                            || p.getCPF().toLowerCase().contains(query))
                             .collect(Collectors.toList());
-                    
+
                     dlm.clear();
-                    
+
                     for (int i = 0; i < temp.size(); i++) {
-                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF() +
-                                " | " + temp.get(i).getPhone();
+                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF()
+                                + " | " + temp.get(i).getPhone();
                         dlm.add(i, r);
                     }
-                    
+
                     listPeople.setModel(dlm);
                 }
             }
         };
-        
+
         textFieldSearch.getDocument().addDocumentListener(documentListener);
         textFieldSearch.addFocusListener(this);
+        
+        boolean hasSelection = listPeople.getSelectedIndex() != -1;
+        
+        buttonEdit.setEnabled(hasSelection);
+        buttonRemove.setEnabled(hasSelection);
+        
+        listPeople.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    JList source = (JList)event.getSource();
+                    boolean hasSelection = source.getSelectedIndex() != -1;
+                    
+                    buttonEdit.setEnabled(hasSelection);
+                    buttonRemove.setEnabled(hasSelection);
+                }
+            }
+        });
     }
 
     /**
@@ -132,7 +147,6 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         jPanel1 = new javax.swing.JPanel();
         textFieldSearch = new javax.swing.JTextField();
         buttonClear = new javax.swing.JButton();
-        jPanel6 = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
         listPeople = new javax.swing.JList<>();
         jPanel9 = new javax.swing.JPanel();
@@ -186,8 +200,6 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         gridBagConstraints.insets = new java.awt.Insets(5, 7, 5, 5);
         jPanel1.add(buttonClear, gridBagConstraints);
 
-        jPanel6.setLayout(new java.awt.GridBagLayout());
-
         listPeople.setModel(new javax.swing.AbstractListModel<String>() {
             String[] strings = { " " };
             public int getSize() { return strings.length; }
@@ -196,14 +208,6 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         listPeople.setMinimumSize(new java.awt.Dimension(200, 36));
         listPeople.setPreferredSize(new java.awt.Dimension(436, 36));
         jScrollPane5.setViewportView(listPeople);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.gridheight = 2;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 5);
-        jPanel6.add(jScrollPane5, gridBagConstraints);
 
         jPanel9.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
 
@@ -238,26 +242,25 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, 460, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 446, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(0, 0, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane5)
+                        .addGap(7, 7, 7))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -268,7 +271,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
+        String cpf = listPeople.getSelectedValue().split("\\|")[1].trim();
         PersonDialog.main(null, this, true, hospitalID, cpf);
     }//GEN-LAST:event_buttonEditActionPerformed
 
@@ -282,14 +285,13 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
 
     private void buttonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveActionPerformed
         String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
-        
+
         try {
             PersonAccessor pa = new PersonAccessor(database);
             pa.remove(cpf);
             frameInitialization();
             textFieldSearch.setText(Constants.SearchPlaceholder);
-        }
-        catch(SQLException e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(
                     this,
                     "Houve um erro ao acessar o banco de dados. Tente novamente.",
@@ -308,8 +310,8 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         }
 
         for (int i = 0; i < personList.size(); i++) {
-            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF() +
-                    " | " + personList.get(i).getPhone();
+            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF()
+                    + " | " + personList.get(i).getPhone();
             dlm.add(i, r);
         }
         listPeople.setModel(dlm);
@@ -343,7 +345,6 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JLabel labelIcon1;
@@ -353,13 +354,15 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (textFieldSearch.getText().equals(Constants.SearchPlaceholder))
+        if (textFieldSearch.getText().equals(Constants.SearchPlaceholder)) {
             textFieldSearch.setText(Constants.EmptyString);
+        }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        if (textFieldSearch.getText().equals(Constants.EmptyString))
+        if (textFieldSearch.getText().equals(Constants.EmptyString)) {
             textFieldSearch.setText(Constants.SearchPlaceholder);
+        }
     }
 }

@@ -61,4 +61,9 @@ public class BoneMarrow extends Resource {
     public String getREDOME() {
         return redome;
     }
+    
+    @Override
+    public String toString() {
+        return "Medula óssea";
+    }
 }

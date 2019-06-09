@@ -25,6 +25,7 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.model.Blood;
@@ -42,10 +43,6 @@ import java.sql.Date;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Heitor
- */
 public class ResourceDialog extends javax.swing.JDialog {
     private javax.swing.JDialog parentDialog;
     private List<Resource> resourceList;
@@ -349,7 +346,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBlood.add(jLabel25, gridBagConstraints);
 
-        formattedTextAcceptorCPFBlood.setEditable(false);
         formattedTextAcceptorCPFBlood.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFBlood.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -374,7 +370,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBlood.add(jLabel26, gridBagConstraints);
 
-        datePickerAcceptionBlood.setEditable(false);
         datePickerAcceptionBlood.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -483,7 +478,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelOrgan.add(jLabel13, gridBagConstraints);
 
-        formattedTextAcceptorCPFOrgan.setEditable(false);
         formattedTextAcceptorCPFOrgan.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFOrgan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -508,7 +502,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelOrgan.add(jLabel14, gridBagConstraints);
 
-        datePickerAcceptionOrgan.setEditable(false);
         datePickerAcceptionOrgan.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -620,7 +613,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBoneMarrow.add(jLabel19, gridBagConstraints);
 
-        formattedTextAcceptorCPFBoneMarrow.setEditable(false);
         formattedTextAcceptorCPFBoneMarrow.setPreferredSize(new java.awt.Dimension(270, 26));
         formattedTextAcceptorCPFBoneMarrow.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -645,7 +637,6 @@ public class ResourceDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         panelBoneMarrow.add(jLabel20, gridBagConstraints);
 
-        datePickerAcceptionBoneMarrow.setEditable(false);
         datePickerAcceptionBoneMarrow.setPreferredSize(new java.awt.Dimension(270, 26));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;

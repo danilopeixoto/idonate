@@ -35,10 +35,6 @@ import com.xnc.idonate.model.Hospital;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Heitor
- */
 public class LoginWindow extends javax.swing.JFrame {
     private Database database;
     /**

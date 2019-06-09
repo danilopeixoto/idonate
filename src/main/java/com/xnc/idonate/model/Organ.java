@@ -76,4 +76,22 @@ public class Organ extends Resource {
     public float getWeight() {
         return weight;
     }
+    
+    @Override
+    public String toString() {
+        switch (this.organType) {
+            case Heart: return "Coração";
+            case Lungs: return "Pulmão";
+            case Liver: return "Fígado";
+            case Kidneys: return "Rins";
+            case Pancreas: return "Pâncreas";
+            case Intestine: return "Intestino";
+            case Skin: return "Pele";
+            case Bone: return "Osso";
+            case Cornea: return "Córnea";
+            case Vein: return "Veia";
+            case Tendon: return "Tendão";
+            default: throw new IndexOutOfBoundsException();
+        }
+    }
 }

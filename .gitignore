@@ -1,5 +1,5 @@
 target/
-
+services.auth
 nb-configuration.xml
 nbactions.xml
 src/main/res/credentials.service

@@ -25,6 +25,7 @@
 // CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 // OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 package com.xnc.idonate.view;
 
 import com.xnc.idonate.controller.Database;
@@ -43,15 +44,15 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
-/**
- *
- * @author Heitor
- */
 public class PersonDialog extends javax.swing.JDialog {
+    
     private Database database;
     private DefaultListModel dlm;
     private List<Resource> resourceList;
@@ -61,6 +62,11 @@ public class PersonDialog extends javax.swing.JDialog {
 
     /**
      * Creates new form PersonEditor
+     *
+     * @param parent
+     * @param modal
+     * @param hospitalID
+     * @param personCPF
      */
     public PersonDialog(java.awt.Frame parent, boolean modal,
             String hospitalID, String personCPF) {
@@ -77,47 +83,73 @@ public class PersonDialog extends javax.swing.JDialog {
         database = new Database(
                 Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
 
-        if (personCPF != null)
+         if (personCPF != null) {
             fetchPersonData();
-
+        }
+        
+        ResourceAccessor ra = new ResourceAccessor(database);
+        
+        try {
+            resourceList = ra.getAll(personCPF);
+            this.updateResourceList();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
         try {
             MaskFormatter cpfMask = new MaskFormatter("###.###.###-##");
             cpfMask.setPlaceholderCharacter('0');
-
+            
             formattedTextFieldCPF.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
-            
-            MaskFormatter numberMask = new MaskFormatter("##########");
-            
-            formattedTextFieldResourceID.setFormatterFactory(
-                    new DefaultFormatterFactory(numberMask));
 
+            //MaskFormatter numberMask = new MaskFormatter("##########");
+            //formattedTextFieldResourceID.setFormatterFactory(
+            //        new DefaultFormatterFactory(numberMask));
             MaskFormatter phoneMask = new MaskFormatter("(##) #####-####");
             phoneMask.setPlaceholderCharacter('0');
-
+            
             formattedTextFieldPhone.setFormatterFactory(
                     new DefaultFormatterFactory(phoneMask));
         } catch (ParseException exception) {
             exception.printStackTrace();
         }
+        
+        boolean hasSelection = listResources.getSelectedIndex() != -1;
+        
+        buttonEdit.setEnabled(hasSelection);
+        buttonRemove.setEnabled(hasSelection);
+        buttonNotify.setEnabled(hasSelection);
+        
+        listResources.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    JList source = (JList)event.getSource();
+                    boolean hasSelection = source.getSelectedIndex() != -1;
+                    
+                    buttonEdit.setEnabled(hasSelection);
+                    buttonRemove.setEnabled(hasSelection);
+                    buttonNotify.setEnabled(hasSelection);
+                }
+            }
+        });
     }
-
+    
     private void fetchPersonData() {
         PersonAccessor pa = new PersonAccessor(database);
         
         try {
             Person person = pa.get(personCPF);
-
+            
             if (person == null) {
                 JOptionPane.showMessageDialog(
                         this,
                         "Não foi possível carregar informações da pessoa.",
                         "Erro",
                         JOptionPane.ERROR_MESSAGE);
-
+                
                 this.dispose();
-            }
-            else {
+            } else {
                 formattedTextFieldCPF.setValue(person.getCPF());
                 textFieldName.setText(person.getName());
                 textFieldAddress.setText(person.getAddress());
@@ -132,8 +164,7 @@ public class PersonDialog extends javax.swing.JDialog {
                 comboBoxBloodType.setSelectedIndex(Utility.bloodTypeToComboBoxIndex(person.getBloodType()));
                 textAreaMedicalConditions.setText(person.getMedicalConditions());
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(
                     this,
                     "Houve um erro ao acessar o banco de dados. Tente novamente.",
@@ -159,28 +190,30 @@ public class PersonDialog extends javax.swing.JDialog {
         
         listPeople.setModel(dlm);*/
     }
-
+    
     public void updateResourceList() {
         dlm.clear();
         
         for (int i = 0; i < resourceList.size(); i++) {
             Resource resource = resourceList.get(i);
             String r = null;
-
-            if (resource.getType() == Resource.ResourceType.Blood) {
-                Blood blood = (Blood)resource;
-
-                r = resource.getID() + " | Sangue | " + Utility.bloodTypeToString(blood.getBloodType()) + " | "
+            
+            if (resource == null) {
+            } else if (resource.getType() == Resource.ResourceType.Blood) {
+                Blood blood = (Blood) resource;
+                
+                r = "Sangue | " + Utility.bloodTypeToString(blood.getBloodType()) + " | "
                         + resource.getDonationDate().toString();
             } else if (resource.getType() == Resource.ResourceType.Organ) {
-                Organ organ = (Organ)resource;
-
-                r = resource.getID() + " | Orgão | " + Utility.organTypeToString(organ.getOrganType()) + " | "
+                Organ organ = (Organ) resource;
+                
+                r = "Orgão | " + Utility.organTypeToString(organ.getOrganType()) + " | "
                         + resource.getDonationDate().toString();
-            } else
-                r = resource.getID() + " | Medula Óssea | "
+            } else {
+                r = "Medula Óssea | "
                         + resource.getDonationDate().toString();
-
+            }
+            
             dlm.add(i, r);
         }
         listResources.setModel(dlm);
@@ -202,6 +235,15 @@ public class PersonDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jPanel4 = new javax.swing.JPanel();
+        panelDonor = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        listResources = new javax.swing.JList<>();
+        jPanel7 = new javax.swing.JPanel();
+        buttonAdd = new javax.swing.JButton();
+        buttonEdit = new javax.swing.JButton();
+        buttonRemove = new javax.swing.JButton();
+        buttonNotify = new javax.swing.JButton();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -226,19 +268,6 @@ public class PersonDialog extends javax.swing.JDialog {
         comboBoxBloodType = new javax.swing.JComboBox<>();
         jScrollPane2 = new javax.swing.JScrollPane();
         textAreaMedicalConditions = new javax.swing.JTextArea();
-        tabbedPane = new javax.swing.JTabbedPane();
-        panelDonor = new javax.swing.JPanel();
-        jLabel12 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        listResources = new javax.swing.JList<>();
-        jPanel7 = new javax.swing.JPanel();
-        buttonAdd = new javax.swing.JButton();
-        buttonEdit = new javax.swing.JButton();
-        buttonRemove = new javax.swing.JButton();
-        panelAcceptor = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        formattedTextFieldResourceID = new javax.swing.JFormattedTextField();
-        buttonNotify = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         buttonDone = new javax.swing.JButton();
         buttonCancel = new javax.swing.JButton();
@@ -270,6 +299,87 @@ public class PersonDialog extends javax.swing.JDialog {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
         jPanel4.setLayout(new java.awt.GridBagLayout());
+
+        panelDonor.setLayout(new java.awt.GridBagLayout());
+
+        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel12.setText("Recursos");
+        jLabel12.setMaximumSize(new java.awt.Dimension(1, 1));
+        jLabel12.setMinimumSize(new java.awt.Dimension(150, 16));
+        jLabel12.setPreferredSize(new java.awt.Dimension(150, 16));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
+        gridBagConstraints.ipady = 131;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(6, 6, 5, 6);
+        panelDonor.add(jLabel12, gridBagConstraints);
+
+        jScrollPane3.setPreferredSize(new java.awt.Dimension(150, 147));
+
+        listResources.setMinimumSize(new java.awt.Dimension(150, 36));
+        listResources.setPreferredSize(new java.awt.Dimension(150, 36));
+        jScrollPane3.setViewportView(listResources);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        panelDonor.add(jScrollPane3, gridBagConstraints);
+
+        jPanel7.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
+
+        buttonAdd.setText("Adicionar");
+        buttonAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddActionPerformed(evt);
+            }
+        });
+        jPanel7.add(buttonAdd);
+
+        buttonEdit.setText("Editar");
+        buttonEdit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonEditActionPerformed(evt);
+            }
+        });
+        jPanel7.add(buttonEdit);
+
+        buttonRemove.setText("Remover");
+        buttonRemove.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonRemoveActionPerformed(evt);
+            }
+        });
+        jPanel7.add(buttonRemove);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        panelDonor.add(jPanel7, gridBagConstraints);
+
+        buttonNotify.setText("Notificar");
+        buttonNotify.setPreferredSize(new java.awt.Dimension(150, 23));
+        buttonNotify.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonNotifyActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 6, 5);
+        panelDonor.add(buttonNotify, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.insets = new java.awt.Insets(0, 41, 0, 76);
+        jPanel4.add(panelDonor, gridBagConstraints);
 
         jPanel5.setLayout(new java.awt.GridBagLayout());
 
@@ -510,107 +620,6 @@ public class PersonDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         jPanel4.add(jPanel5, gridBagConstraints);
 
-        panelDonor.setLayout(new java.awt.GridBagLayout());
-
-        jLabel12.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel12.setText("Recursos");
-        jLabel12.setMaximumSize(new java.awt.Dimension(1, 1));
-        jLabel12.setMinimumSize(new java.awt.Dimension(150, 16));
-        jLabel12.setPreferredSize(new java.awt.Dimension(150, 16));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.VERTICAL;
-        gridBagConstraints.ipady = 131;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(6, 6, 5, 6);
-        panelDonor.add(jLabel12, gridBagConstraints);
-
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(150, 147));
-
-        listResources.setMinimumSize(new java.awt.Dimension(150, 36));
-        listResources.setPreferredSize(new java.awt.Dimension(150, 36));
-        jScrollPane3.setViewportView(listResources);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        panelDonor.add(jScrollPane3, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
-
-        buttonAdd.setText("Adicionar");
-        buttonAdd.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonAddActionPerformed(evt);
-            }
-        });
-        jPanel7.add(buttonAdd);
-
-        buttonEdit.setText("Editar");
-        buttonEdit.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonEditActionPerformed(evt);
-            }
-        });
-        jPanel7.add(buttonEdit);
-
-        buttonRemove.setText("Remover");
-        buttonRemove.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonRemoveActionPerformed(evt);
-            }
-        });
-        jPanel7.add(buttonRemove);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        panelDonor.add(jPanel7, gridBagConstraints);
-
-        tabbedPane.addTab("Doador", panelDonor);
-
-        panelAcceptor.setLayout(new java.awt.GridBagLayout());
-
-        jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
-        jLabel13.setText("Identificação de Recurso");
-        jLabel13.setMaximumSize(new java.awt.Dimension(20, 14));
-        jLabel13.setMinimumSize(new java.awt.Dimension(150, 14));
-        jLabel13.setPreferredSize(new java.awt.Dimension(150, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        panelAcceptor.add(jLabel13, gridBagConstraints);
-
-        formattedTextFieldResourceID.setPreferredSize(new java.awt.Dimension(150, 26));
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(7, 7, 5, 5);
-        panelAcceptor.add(formattedTextFieldResourceID, gridBagConstraints);
-
-        buttonNotify.setText("Notificar");
-        buttonNotify.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                buttonNotifyActionPerformed(evt);
-            }
-        });
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.insets = new java.awt.Insets(6, 6, 6, 6);
-        panelAcceptor.add(buttonNotify, gridBagConstraints);
-
-        tabbedPane.addTab("Receptor", panelAcceptor);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        jPanel4.add(tabbedPane, gridBagConstraints);
-
         jScrollPane1.setViewportView(jPanel4);
 
         jPanel2.setLayout(new java.awt.GridLayout(1, 2, 5, 10));
@@ -635,9 +644,9 @@ public class PersonDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 473, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
@@ -647,7 +656,7 @@ public class PersonDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -677,78 +686,70 @@ public class PersonDialog extends javax.swing.JDialog {
         // TODO add your handling code here:
     }//GEN-LAST:event_comboBoxBloodTypeActionPerformed
 
-    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        int index = listResources.getSelectedIndex();
-        ResourceDialog.main(null, null, true, this, resourceList, index);
-    }//GEN-LAST:event_buttonEditActionPerformed
-
     private void buttonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelActionPerformed
         this.dispose();
     }//GEN-LAST:event_buttonCancelActionPerformed
-
-    private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
-        ResourceDialog.main(null, null, true, this, resourceList, null);
-    }//GEN-LAST:event_buttonAddActionPerformed
-
+    
     private boolean isEmpty() {
         return this.textFieldAddress.getText().isEmpty()
-                || this.spinnerAge.getValue().toString().isEmpty()
-                || ((String)this.formattedTextFieldCPF.getValue()).isEmpty()
-                || this.textFieldEmail.getText().isEmpty()
-                || this.spinnerMass.getValue().toString().isEmpty()
-                || this.textFieldName.getText().isEmpty()
-                || ((String)this.formattedTextFieldPhone.getValue()).isEmpty();
+            || this.spinnerAge.getValue().toString().isEmpty()
+            || ((String) this.formattedTextFieldCPF.getValue()).isEmpty()
+            || this.textFieldEmail.getText().isEmpty()
+            || this.spinnerMass.getValue().toString().isEmpty()
+            || this.textFieldName.getText().isEmpty()
+            || ((String) this.formattedTextFieldPhone.getValue()).isEmpty();
     }
 
     private void buttonDoneActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDoneActionPerformed
         if (this.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos.");
-                return;
-            }
-
-            try {
-                PersonAccessor pa = new PersonAccessor(database);
-                boolean status = pa.has(this.formattedTextFieldCPF.getText());
-
-                if (status) {
-                    JOptionPane.showMessageDialog(this, "CPF já cadastrado.");
-                    return;
-                }
-            }catch (SQLException ex) {
-                JOptionPane.showMessageDialog(
-                        this,
-                        "Houve um erro ao acessar o banco de dados. Tente novamente.",
-                        "Erro",
-                        JOptionPane.ERROR_MESSAGE);
-
-                return;
-            }
-
-            if (!this.textFieldEmail.getText().matches(Constants.EmailRegex)) {
-                JOptionPane.showMessageDialog(this, "Email inválido.");
-                return;
-            }
-
-            System.out.println(this.formattedTextFieldCPF.getText());
-
-            Person person = new Person();
-            person.setCPF(this.formattedTextFieldCPF.getText());
-            person.setName(this.textFieldName.getText());
-            person.setAddress(this.textFieldAddress.getText());
-            person.setPhone(this.formattedTextFieldPhone.getText());
-            person.setEmail(this.textFieldEmail.getText());
-            person.setAge(Integer.parseInt(this.spinnerAge.getValue().toString()));
-            person.setSex(this.radioButtonFemale.isSelected() ? Sex.Female : Sex.Male);
-            person.setWeight(Float.parseFloat(this.spinnerMass.getValue().toString()));
-            person.setBloodType(Utility.comboBoxIndexToBloodType(this.comboBoxBloodType.getSelectedIndex()));
-            person.setMedicalConditions(this.textAreaMedicalConditions.getText());
-            person.setHospitalID(hospitalID);
-
-            for (Resource resource : resourceList)
-                resource.setDonorCPF(person.getCPF());
-
-            try {
-                PersonAccessor pa = new PersonAccessor(database);
+            JOptionPane.showMessageDialog(this, "Um ou mais dos campos obrigatórios não estão preenchidos.");
+            return;
+        }
+        
+        boolean hasPerson;
+        try {
+            PersonAccessor pa = new PersonAccessor(database);
+            hasPerson = pa.has(this.personCPF);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            
+            return;
+        }
+        
+        if (!this.textFieldEmail.getText().matches(Constants.EmailRegex)) {
+            JOptionPane.showMessageDialog(this, "Email inválido.");
+            return;
+        }
+        
+        System.out.println(this.formattedTextFieldCPF.getText());
+        
+        Person person = new Person();
+        person.setCPF(this.formattedTextFieldCPF.getText());
+        person.setName(this.textFieldName.getText());
+        person.setAddress(this.textFieldAddress.getText());
+        person.setPhone(this.formattedTextFieldPhone.getText());
+        person.setEmail(this.textFieldEmail.getText());
+        person.setAge(Integer.parseInt(this.spinnerAge.getValue().toString()));
+        person.setSex(this.radioButtonFemale.isSelected() ? Sex.Female : Sex.Male);
+        person.setWeight(Float.parseFloat(this.spinnerMass.getValue().toString()));
+        person.setBloodType(Utility.comboBoxIndexToBloodType(this.comboBoxBloodType.getSelectedIndex()));
+        person.setMedicalConditions(this.textAreaMedicalConditions.getText());
+        person.setHospitalID(hospitalID);
+        
+        for (Resource resource : resourceList) {
+            resource.setDonorCPF(person.getCPF());
+        }
+        
+        try {
+            PersonAccessor pa = new PersonAccessor(database);
+            if (hasPerson) {
+                pa.update(this.personCPF, person);
+                this.personCPF = person.getCPF();
+            } else {
                 pa.add(person);
 
                 ResourceAccessor ra = new ResourceAccessor(database);
@@ -756,56 +757,93 @@ public class PersonDialog extends javax.swing.JDialog {
                 for (Resource resource : resourceList) {
                     ra.add(resource);
                 }
-            } catch (SQLException exception) {
+            }
+        } catch (SQLException exception) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            
+            exception.printStackTrace();
+            return;
+        }
+        
+        this.dispose();
+        
+        MainWindow window = (MainWindow) getParent();
+        window.frameInitialization();
+    }//GEN-LAST:event_buttonDoneActionPerformed
+
+    private void buttonNotifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNotifyActionPerformed
+        Resource resource = null;
+        try {
+            resource = this.getSelectedResource();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(
+                    this, "Campo não preenchido.");
+        }
+        
+        if (resource == null) {
+            JOptionPane.showMessageDialog(
+                    this, "Recurso não encontrado.");
+        } else {
+            
+            try {
+                PersonAccessor pa = new PersonAccessor(database);
+                Person person = pa.get(resource.getDonorCPF());
+
+                this.nmanager.sendDefaultSmsToDonor(person, resource);
+            } catch (SQLException e) {
                 JOptionPane.showMessageDialog(
                         this,
                         "Houve um erro ao acessar o banco de dados. Tente novamente.",
                         "Erro",
                         JOptionPane.ERROR_MESSAGE);
-
-                exception.printStackTrace();
-                return;
             }
-        
-        this.dispose();
-        
-        MainWindow window = (MainWindow)getParent();
-        window.frameInitialization();
-    }//GEN-LAST:event_buttonDoneActionPerformed
+        }
+    }//GEN-LAST:event_buttonNotifyActionPerformed
 
     private void buttonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveActionPerformed
+        try {
+            ResourceAccessor ra = new ResourceAccessor(database);
+            Resource r = this.getSelectedResource();
+            ra.remove(r.getID());
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        
         int index = listResources.getSelectedIndex();
         resourceList.remove(index);
         updateResourceList();
     }//GEN-LAST:event_buttonRemoveActionPerformed
 
-    private void buttonNotifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNotifyActionPerformed
-        String text = (String)formattedTextFieldResourceID.getValue();
+    private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
+        int index = listResources.getSelectedIndex();
+        ResourceDialog.main(null, null, true, this, resourceList, index);
+    }//GEN-LAST:event_buttonEditActionPerformed
+
+    private void buttonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddActionPerformed
+        ResourceDialog.main(null, null, true, this, resourceList, null);
+    }//GEN-LAST:event_buttonAddActionPerformed
+
+    private Resource getSelectedResource() throws SQLException {
+        String text = listResources.getSelectedValue();
         
         if (text.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    this, "Campo não preenchido.");
+            return null;
         }
-        else {
-            try {
-                ResourceAccessor ra = new ResourceAccessor(database);
-                Resource resource = ra.get(Integer.parseInt(text));
-                
-                PersonAccessor pa = new PersonAccessor(database);
-                Person person = pa.get(resource.getDonorCPF());
-
-                nmanager.sendDefaultSmsToDonor(person, resource);
-            }
-            catch (SQLException e) {
-                JOptionPane.showMessageDialog(
-                    this,
-                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
-                    "Erro",
-                    JOptionPane.ERROR_MESSAGE);
-            }
+        
+        int i;
+        for (i = 0; i < text.length() && Character.isDigit(text.charAt(i)); ++i) {
         }
-    }//GEN-LAST:event_buttonNotifyActionPerformed
 
+        int index = Integer.parseInt(text.substring(0, i));
+        ResourceAccessor ra = new ResourceAccessor(database);
+        return ra.get(index);
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -848,12 +886,10 @@ public class PersonDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> comboBoxBloodType;
     private javax.swing.JFormattedTextField formattedTextFieldCPF;
     private javax.swing.JFormattedTextField formattedTextFieldPhone;
-    private javax.swing.JFormattedTextField formattedTextFieldResourceID;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
-    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -873,13 +909,11 @@ public class PersonDialog extends javax.swing.JDialog {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel labelIcon;
     private javax.swing.JList<String> listResources;
-    private javax.swing.JPanel panelAcceptor;
     private javax.swing.JPanel panelDonor;
     private javax.swing.JRadioButton radioButtonFemale;
     private javax.swing.JRadioButton radioButtonMale;
     private javax.swing.JSpinner spinnerAge;
     private javax.swing.JSpinner spinnerMass;
-    private javax.swing.JTabbedPane tabbedPane;
     private javax.swing.JTextArea textAreaMedicalConditions;
     private javax.swing.JTextField textFieldAddress;
     private javax.swing.JTextField textFieldEmail;

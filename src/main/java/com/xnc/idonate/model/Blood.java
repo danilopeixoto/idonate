@@ -73,4 +73,19 @@ public class Blood extends Resource {
     public float getVolume() {
         return volume;
     }
+    
+    @Override
+    public String toString() {
+        switch (this.bloodType) {
+            case APlus: return "Sangue A+";
+            case BPlus: return "Sangue B+";
+            case OPlus: return "Sangue O+";
+            case ABPlus: return "Sangue AB+";
+            case AMinus: return "Sangue A-";
+            case BMinus: return "Sangue B-";
+            case OMinus: return "Sangue O-";
+            case ABMinus: return "Sangue AB-";
+            default: throw new IndexOutOfBoundsException();
+        }
+    }
 }
