@@ -49,7 +49,7 @@ public class Credentials {
         DatabasePassword = buffer.readLine();
         DatabaseName =  buffer.readLine();
         AccountSID = buffer.readLine();
-        AccountPhone = buffer.readLine();
         AuthenticationToken = buffer.readLine();
+        AccountPhone = buffer.readLine();
     }
 }

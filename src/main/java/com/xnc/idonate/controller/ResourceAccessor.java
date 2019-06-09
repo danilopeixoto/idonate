@@ -77,6 +77,86 @@ public class ResourceAccessor extends Accessor {
     public ResourceAccessor(Database database) {
         super(database);
     }
+    
+    public boolean update(Resource resource) throws SQLException {
+        database.connect();
+
+        preparedStatement = database.createPreparedStatement(
+                "UPDATE resources SET donor_cpf = ?, donation_date = ?, description = ?,"
+                + "acceptor_cpf = ?, acceptation_date = ?, type = ? "
+                + "WHERE id = ?;");
+
+        preparedStatement.setString(1, resource.getDonorCPF());
+        preparedStatement.setDate(2, resource.getDonationDate());
+        preparedStatement.setString(3, resource.getDescription());
+        preparedStatement.setString(4, resource.getAcceptorCPF());
+        preparedStatement.setDate(5, resource.getAcceptationDate());
+        preparedStatement.setInt(6, resource.getType().ordinal());
+        preparedStatement.setInt(7, resource.getID());
+
+        boolean status = preparedStatement.execute();
+
+        /*if (!status) {
+            database.disconnect();
+            return false;
+        }*/
+
+        status = false;
+
+        switch (resource.getType()) {
+            case Organ:
+                Organ organ = (Organ) resource;
+
+                preparedStatement = database.createPreparedStatement(
+                        "UPDATE organs SET type = ?, weight = ? "
+                        + "WHERE resource_id = ?;");
+
+                preparedStatement.setInt(1, organ.getOrganType().ordinal());
+                preparedStatement.setFloat(2, organ.getWeight());
+                preparedStatement.setInt(3, organ.getID());
+
+                status = preparedStatement.execute();
+
+                break;
+
+            case Blood:
+                Blood blood = (Blood) resource;
+
+                preparedStatement = database.createPreparedStatement(
+                        "UPDATE bloods SET type = ?, volume = ? "
+                        + "WHERE resource_id = ?;");
+
+                preparedStatement.setInt(1, blood.getBloodType().ordinal());
+                preparedStatement.setFloat(2, blood.getVolume());
+                preparedStatement.setInt(3, blood.getID());
+
+                status = preparedStatement.execute();
+
+                break;
+
+            case BoneMarrow:
+                BoneMarrow boneMarrow = (BoneMarrow) resource;
+
+                preparedStatement = database.createPreparedStatement(
+                        "UPDATE bone_marrows SET hla = ?, redome = ? "
+                        + "WHERE resource_id = ?;");
+
+                preparedStatement.setString(1, boneMarrow.getHLA());
+                preparedStatement.setString(2, boneMarrow.getREDOME());
+                preparedStatement.setInt(3, boneMarrow.getID());
+
+                status = preparedStatement.execute();
+
+                break;
+
+            default:
+                break;
+        }
+
+        database.disconnect();
+
+        return status;
+    }
 
     public boolean add(Resource resource) throws SQLException {
         database.connect();

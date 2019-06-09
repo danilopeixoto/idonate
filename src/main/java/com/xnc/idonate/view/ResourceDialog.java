@@ -81,11 +81,11 @@ public class ResourceDialog extends javax.swing.JDialog {
             formattedTextAcceptorCPFBoneMarrow.setFormatterFactory(
                     new DefaultFormatterFactory(cpfMask));
 
-            formattedTextHLABoneMarrow.setFormatterFactory(
-                    new DefaultFormatterFactory(numberMask));
+            //formattedTextHLABoneMarrow.setFormatterFactory(
+            //        new DefaultFormatterFactory(numberMask));
 
-            formattedTextREDOMEBoneMarrow.setFormatterFactory(
-                    new DefaultFormatterFactory(numberMask));
+            //formattedTextREDOMEBoneMarrow.setFormatterFactory(
+            //        new DefaultFormatterFactory(numberMask));
         } catch (ParseException exception) {
             exception.printStackTrace();
         }
@@ -893,14 +893,18 @@ public class ResourceDialog extends javax.swing.JDialog {
 
                 final float volume = Float.parseFloat(this.spinnerVolumeBlood.getValue().toString());
                 
-                blood.setAcceptationDate(null);
-                blood.setAcceptorCPF(null);
+                java.util.Date acceptationDate = datePickerAcceptionBlood.getDate();
+                blood.setAcceptationDate(acceptationDate == null ? null : new Date(acceptationDate.getTime()));
+                
+                String acceptorCPF = (String)formattedTextAcceptorCPFBlood.getValue();
+                blood.setAcceptorCPF(acceptorCPF == null || acceptorCPF.isEmpty() ? null : acceptorCPF);
                 
                 blood.setBloodType(bloodType);
                 blood.setDescription(description);
                 blood.setDonationDate(date);
                 blood.setVolume(volume);
                 resource = blood;
+                
                 break;
             }
 
@@ -913,15 +917,18 @@ public class ResourceDialog extends javax.swing.JDialog {
 
                 final float weight = Float.parseFloat(this.spinnerWeightOrgan.getValue().toString());
                 
+                java.util.Date acceptationDate = datePickerAcceptionOrgan.getDate();
+                organ.setAcceptationDate(acceptationDate == null ? null : new Date(acceptationDate.getTime()));
                 
-                organ.setAcceptationDate(null);
-                organ.setAcceptorCPF(null);
+                String acceptorCPF = (String)formattedTextAcceptorCPFOrgan.getValue();
+                organ.setAcceptorCPF(acceptorCPF == null || acceptorCPF.isEmpty() ? null : acceptorCPF);
                 
                 organ.setDescription(description);
                 organ.setDonationDate(date);
                 organ.setType(organType);
                 organ.setWeight(weight);
                 resource = organ;
+                
                 break;
             }
 
@@ -933,8 +940,11 @@ public class ResourceDialog extends javax.swing.JDialog {
                 final String hla = this.formattedTextHLABoneMarrow.getText();
                 final String redome = this.formattedTextREDOMEBoneMarrow.getText();
                 
-                bm.setAcceptationDate(null);
-                bm.setAcceptorCPF(null);
+                java.util.Date acceptationDate = datePickerAcceptionBoneMarrow.getDate();
+                bm.setAcceptationDate(acceptationDate == null ? null : new Date(acceptationDate.getTime()));
+                
+                String acceptorCPF = (String)formattedTextAcceptorCPFBoneMarrow.getValue();
+                bm.setAcceptorCPF(acceptorCPF == null || acceptorCPF.isEmpty() ? null : acceptorCPF);
                 
                 bm.setDescription(description);
                 bm.setDonationDate(date);
@@ -951,14 +961,17 @@ public class ResourceDialog extends javax.swing.JDialog {
         }
 
         if (resource != null) {
-            if (this.index != null)
+            if (this.index != null) {
+                resource.setID(this.resourceList.get(this.index).getID());
                 resourceList.set(index, resource);
-            else
+            } else {
                 resourceList.add(resource);
+            }
         }
         
         PersonDialog dialog = (PersonDialog)parentDialog;
         dialog.updateResourceList();
+        
         this.dispose();
     }//GEN-LAST:event_buttonDoneActionPerformed
 

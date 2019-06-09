@@ -785,10 +785,13 @@ public class PersonDialog extends javax.swing.JDialog {
                 this.personCPF = person.getCPF();
             } else {
                 pa.add(person);
+            }
 
-                ResourceAccessor ra = new ResourceAccessor(database);
-
-                for (Resource resource : resourceList) {
+            ResourceAccessor ra = new ResourceAccessor(database);
+            for (Resource resource : resourceList) {
+                if (ra.has(resource.getID())) {
+                    ra.update(resource);
+                } else {
                     ra.add(resource);
                 }
             }
@@ -862,22 +865,10 @@ public class PersonDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private Resource getSelectedResource() throws SQLException {
-        /*String text = listResources.getSelectedValue();
-        
-        if (text.isEmpty()) {
-            return null;
-        }
-        
-        int i;
-        for (i = 0; i < text.length() && Character.isDigit(text.charAt(i)); ++i) {
-        }
-
-        int index = Integer.parseInt(text.substring(0, i));
+        int index = tableResources.getSelectedRow();
         ResourceAccessor ra = new ResourceAccessor(database);
-        return ra.get(index);
-        */
-        
-        return null;
+        Resource resource = resourceList.get(index);
+        return ra.get(resource.getID());
     }
     
     /**

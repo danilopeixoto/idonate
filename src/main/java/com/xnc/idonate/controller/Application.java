@@ -31,6 +31,7 @@ package com.xnc.idonate.controller;
 import com.bulenkov.darcula.DarculaLaf;
 import com.xnc.idonate.model.Credentials;
 import com.xnc.idonate.view.LoginWindow;
+import com.xnc.idonate.view.MainWindow;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.swing.UIManager;
@@ -50,7 +51,8 @@ public class Application {
                 Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
             
             database.createDefaultDatabase();
-            LoginWindow.main(arguments);
+            //LoginWindow.main(arguments);
+            MainWindow.main(arguments, "einstein");
         } catch (Exception e) {
             e.printStackTrace();
         }
