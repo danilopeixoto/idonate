@@ -813,13 +813,7 @@ public class PersonDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_buttonDoneActionPerformed
 
     private void buttonNotifyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNotifyActionPerformed
-        Resource resource = null;
-        try {
-            resource = this.getSelectedResource();
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(
-                    this, "Campo não preenchido.");
-        }
+        Resource resource = this.getSelectedResource();
         
         if (resource == null) {
             JOptionPane.showMessageDialog(
@@ -864,11 +858,10 @@ public class PersonDialog extends javax.swing.JDialog {
         ResourceDialog.main(null, null, true, this, resourceList, null);
     }//GEN-LAST:event_buttonAddActionPerformed
 
-    private Resource getSelectedResource() throws SQLException {
+    private Resource getSelectedResource() {
         int index = tableResources.getSelectedRow();
-        ResourceAccessor ra = new ResourceAccessor(database);
         Resource resource = resourceList.get(index);
-        return ra.get(resource.getID());
+        return resource;
     }
     
     /**
