@@ -43,18 +43,16 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.MaskFormatter;
 
 public class PersonDialog extends javax.swing.JDialog {
-    
     private Database database;
-    private DefaultListModel dlm;
+    private DefaultTableModel dtm;
     private List<Resource> resourceList;
     private String hospitalID;
     private String personCPF;
@@ -72,7 +70,7 @@ public class PersonDialog extends javax.swing.JDialog {
             String hospitalID, String personCPF) {
         super(parent, modal);
         initComponents();
-        dlm = new DefaultListModel();
+        dtm = (DefaultTableModel)tableResources.getModel();
         resourceList = new ArrayList<>();
         this.hospitalID = hospitalID;
         this.personCPF = personCPF;
@@ -83,17 +81,21 @@ public class PersonDialog extends javax.swing.JDialog {
         database = new Database(
                 Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
 
-         if (personCPF != null) {
+        if (personCPF != null) {
             fetchPersonData();
-        }
+            
+            ResourceAccessor ra = new ResourceAccessor(database);
         
-        ResourceAccessor ra = new ResourceAccessor(database);
-        
-        try {
-            resourceList = ra.getAll(personCPF);
-            this.updateResourceList();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+            try {
+                resourceList = ra.getAll(personCPF);
+                this.updateResourceList();
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            }
         }
         
         try {
@@ -115,17 +117,16 @@ public class PersonDialog extends javax.swing.JDialog {
             exception.printStackTrace();
         }
         
-        boolean hasSelection = listResources.getSelectedIndex() != -1;
+        boolean hasSelection = tableResources.getSelectedRow() != -1;
         
         buttonEdit.setEnabled(hasSelection);
         buttonRemove.setEnabled(hasSelection);
         buttonNotify.setEnabled(hasSelection);
         
-        listResources.addListSelectionListener(new ListSelectionListener() {
+        tableResources.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
-                    JList source = (JList)event.getSource();
-                    boolean hasSelection = source.getSelectedIndex() != -1;
+                    boolean hasSelection = tableResources.getSelectedRow() != -1;
                     
                     buttonEdit.setEnabled(hasSelection);
                     buttonRemove.setEnabled(hasSelection);
@@ -192,31 +193,40 @@ public class PersonDialog extends javax.swing.JDialog {
     }
     
     public void updateResourceList() {
-        dlm.clear();
+        dtm.setRowCount(0);
         
         for (int i = 0; i < resourceList.size(); i++) {
             Resource resource = resourceList.get(i);
-            String r = null;
             
-            if (resource == null) {
-            } else if (resource.getType() == Resource.ResourceType.Blood) {
-                Blood blood = (Blood) resource;
+            if (resource != null) {
+                Object[] rowData = new Object[3];
                 
-                r = "Sangue | " + Utility.bloodTypeToString(blood.getBloodType()) + " | "
-                        + resource.getDonationDate().toString();
-            } else if (resource.getType() == Resource.ResourceType.Organ) {
-                Organ organ = (Organ) resource;
+                switch (resource.getType()) {
+                    case Blood:
+                        Blood blood = (Blood) resource;
+                        rowData[0] = "Sangue";
+                        rowData[1] = Utility.bloodTypeToString(blood.getBloodType());
+                        rowData[2] = resource.getDonationDate().toString();
+                        
+                        break;
+                    case Organ:
+                        Organ organ = (Organ) resource;
+                        rowData[0] = "Orgão";
+                        rowData[1] = Utility.organTypeToString(organ.getOrganType());
+                        rowData[2] = resource.getDonationDate().toString();
+                        
+                        break;
+                    default:
+                        rowData[0] = "Medula Óssea";
+                        rowData[1] = "-";
+                        rowData[2] = resource.getDonationDate().toString();
+                        
+                        break;
+                }
                 
-                r = "Orgão | " + Utility.organTypeToString(organ.getOrganType()) + " | "
-                        + resource.getDonationDate().toString();
-            } else {
-                r = "Medula Óssea | "
-                        + resource.getDonationDate().toString();
+                dtm.addRow(rowData);
             }
-            
-            dlm.add(i, r);
         }
-        listResources.setModel(dlm);
     }
 
     /**
@@ -237,13 +247,13 @@ public class PersonDialog extends javax.swing.JDialog {
         jPanel4 = new javax.swing.JPanel();
         panelDonor = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        jScrollPane3 = new javax.swing.JScrollPane();
-        listResources = new javax.swing.JList<>();
         jPanel7 = new javax.swing.JPanel();
         buttonAdd = new javax.swing.JButton();
         buttonEdit = new javax.swing.JButton();
         buttonRemove = new javax.swing.JButton();
         buttonNotify = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tableResources = new javax.swing.JTable();
         jPanel5 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -316,18 +326,7 @@ public class PersonDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(6, 6, 5, 6);
         panelDonor.add(jLabel12, gridBagConstraints);
 
-        jScrollPane3.setPreferredSize(new java.awt.Dimension(150, 147));
-
-        listResources.setMinimumSize(new java.awt.Dimension(150, 36));
-        listResources.setPreferredSize(new java.awt.Dimension(150, 36));
-        jScrollPane3.setViewportView(listResources);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        panelDonor.add(jScrollPane3, gridBagConstraints);
-
-        jPanel7.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
+        jPanel7.setLayout(new java.awt.GridLayout(1, 3, 5, 5));
 
         buttonAdd.setText("Adicionar");
         buttonAdd.addActionListener(new java.awt.event.ActionListener() {
@@ -358,7 +357,7 @@ public class PersonDialog extends javax.swing.JDialog {
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 0, 5, 0);
         panelDonor.add(jPanel7, gridBagConstraints);
 
         buttonNotify.setText("Notificar");
@@ -372,8 +371,41 @@ public class PersonDialog extends javax.swing.JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 6, 5);
+        gridBagConstraints.insets = new java.awt.Insets(5, 12, 6, 13);
         panelDonor.add(buttonNotify, gridBagConstraints);
+
+        jScrollPane4.setPreferredSize(new java.awt.Dimension(310, 150));
+
+        tableResources.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Tipo", "Categoria", "Data de Doação"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tableResources.setPreferredSize(new java.awt.Dimension(310, 120));
+        jScrollPane4.setViewportView(tableResources);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        panelDonor.add(jScrollPane4, gridBagConstraints);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -644,21 +676,23 @@ public class PersonDialog extends javax.swing.JDialog {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 525, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 548, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 536, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 296, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -780,7 +814,6 @@ public class PersonDialog extends javax.swing.JDialog {
         try {
             resource = this.getSelectedResource();
         } catch (SQLException ex) {
-            ex.printStackTrace();
             JOptionPane.showMessageDialog(
                     this, "Campo não preenchido.");
         }
@@ -810,17 +843,17 @@ public class PersonDialog extends javax.swing.JDialog {
             ResourceAccessor ra = new ResourceAccessor(database);
             Resource r = this.getSelectedResource();
             ra.remove(r.getID());
+            
+            int index = tableResources.getSelectedRow();
+            resourceList.remove(index);
+            updateResourceList();
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-        
-        int index = listResources.getSelectedIndex();
-        resourceList.remove(index);
-        updateResourceList();
     }//GEN-LAST:event_buttonRemoveActionPerformed
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        int index = listResources.getSelectedIndex();
+        int index = tableResources.getSelectedRow();
         ResourceDialog.main(null, null, true, this, resourceList, index);
     }//GEN-LAST:event_buttonEditActionPerformed
 
@@ -829,7 +862,7 @@ public class PersonDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private Resource getSelectedResource() throws SQLException {
-        String text = listResources.getSelectedValue();
+        /*String text = listResources.getSelectedValue();
         
         if (text.isEmpty()) {
             return null;
@@ -842,6 +875,9 @@ public class PersonDialog extends javax.swing.JDialog {
         int index = Integer.parseInt(text.substring(0, i));
         ResourceAccessor ra = new ResourceAccessor(database);
         return ra.get(index);
+        */
+        
+        return null;
     }
     
     /**
@@ -906,14 +942,14 @@ public class PersonDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel labelIcon;
-    private javax.swing.JList<String> listResources;
     private javax.swing.JPanel panelDonor;
     private javax.swing.JRadioButton radioButtonFemale;
     private javax.swing.JRadioButton radioButtonMale;
     private javax.swing.JSpinner spinnerAge;
     private javax.swing.JSpinner spinnerMass;
+    private javax.swing.JTable tableResources;
     private javax.swing.JTextArea textAreaMedicalConditions;
     private javax.swing.JTextField textFieldAddress;
     private javax.swing.JTextField textFieldEmail;

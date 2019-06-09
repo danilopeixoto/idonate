@@ -39,16 +39,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.table.DefaultTableModel;
 
 public class MainWindow extends javax.swing.JFrame implements FocusListener {
-    private DefaultListModel dlm;
+    private DefaultTableModel dtm;
     private List<Person> personList;
     private Database database;
 
@@ -62,8 +61,7 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
                 Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
         
         this.initComponents();
-        dlm = new DefaultListModel();
-        dlm.add(0, " ");
+        dtm = (DefaultTableModel)tablePeople.getModel();
         personList = new ArrayList<>();
         this.hospitalID = hospitalID;
         frameInitialization();
@@ -97,15 +95,17 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
                             || p.getCPF().toLowerCase().contains(query))
                             .collect(Collectors.toList());
 
-                    dlm.clear();
+                    dtm.setRowCount(0);
 
                     for (int i = 0; i < temp.size(); i++) {
-                        String r = temp.get(i).getName() + " | " + temp.get(i).getCPF()
-                                + " | " + temp.get(i).getPhone();
-                        dlm.add(i, r);
+                        Object[] rowData = {
+                            temp.get(i).getName(),
+                            temp.get(i).getCPF(),
+                            temp.get(i).getPhone()
+                        };
+                        
+                        dtm.addRow(rowData);
                     }
-
-                    listPeople.setModel(dlm);
                 }
             }
         };
@@ -113,16 +113,15 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         textFieldSearch.getDocument().addDocumentListener(documentListener);
         textFieldSearch.addFocusListener(this);
         
-        boolean hasSelection = listPeople.getSelectedIndex() != -1;
+        boolean hasSelection = tablePeople.getSelectedRow() != -1;
         
         buttonEdit.setEnabled(hasSelection);
         buttonRemove.setEnabled(hasSelection);
         
-        listPeople.addListSelectionListener(new ListSelectionListener() {
+        tablePeople.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent event) {
                 if (!event.getValueIsAdjusting()) {
-                    JList source = (JList)event.getSource();
-                    boolean hasSelection = source.getSelectedIndex() != -1;
+                    boolean hasSelection = tablePeople.getSelectedRow() != -1;
                     
                     buttonEdit.setEnabled(hasSelection);
                     buttonRemove.setEnabled(hasSelection);
@@ -147,12 +146,12 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         jPanel1 = new javax.swing.JPanel();
         textFieldSearch = new javax.swing.JTextField();
         buttonClear = new javax.swing.JButton();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        listPeople = new javax.swing.JList<>();
         jPanel9 = new javax.swing.JPanel();
         buttonAdd = new javax.swing.JButton();
         buttonEdit = new javax.swing.JButton();
         buttonRemove = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablePeople = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("iDonate");
@@ -200,15 +199,6 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         gridBagConstraints.insets = new java.awt.Insets(5, 7, 5, 5);
         jPanel1.add(buttonClear, gridBagConstraints);
 
-        listPeople.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { " " };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        listPeople.setMinimumSize(new java.awt.Dimension(200, 36));
-        listPeople.setPreferredSize(new java.awt.Dimension(436, 36));
-        jScrollPane5.setViewportView(listPeople);
-
         jPanel9.setLayout(new java.awt.GridLayout(1, 3, 10, 5));
 
         buttonAdd.setText("Adicionar");
@@ -237,21 +227,43 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
         });
         jPanel9.add(buttonRemove);
 
+        tablePeople.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Nome", "CPF", "Telefone"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane1.setViewportView(tablePeople);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, 452, Short.MAX_VALUE)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane5)
-                        .addGap(7, 7, 7))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jPanel9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -260,10 +272,10 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(5, 5, 5))
         );
 
         pack();
@@ -271,7 +283,9 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditActionPerformed
-        String cpf = listPeople.getSelectedValue().split("\\|")[1].trim();
+        int index = tablePeople.getSelectedRow();
+        String cpf = (String)tablePeople.getModel().getValueAt(index, 1);
+        
         PersonDialog.main(null, this, true, hospitalID, cpf);
     }//GEN-LAST:event_buttonEditActionPerformed
 
@@ -284,13 +298,18 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }//GEN-LAST:event_buttonAddActionPerformed
 
     private void buttonRemoveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonRemoveActionPerformed
-        String cpf = listPeople.getSelectedValue().split("\\|")[1].replace(" ", "");
+        int index = tablePeople.getSelectedRow();
+        String cpf = (String)tablePeople.getModel().getValueAt(index, 1);
 
         try {
             PersonAccessor pa = new PersonAccessor(database);
             pa.remove(cpf);
             frameInitialization();
-            textFieldSearch.setText(Constants.SearchPlaceholder);
+            
+            String query = textFieldSearch.getText();
+            
+            if (!query.equals(Constants.SearchPlaceholder))
+                textFieldSearch.setText(Constants.SearchPlaceholder);
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(
                     this,
@@ -301,20 +320,31 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     }//GEN-LAST:event_buttonRemoveActionPerformed
 
     public void frameInitialization() {
-        dlm.clear();
+        dtm.setRowCount(0);
+        
         PersonAccessor acessor = new PersonAccessor(database);
+        
         try {
             personList = acessor.getAll(hospitalID);
-        } catch (SQLException ex) {
-            System.out.println("Error [MainWindow.frameInitialization]: " + ex.getMessage());
+        } catch (SQLException exception) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Houve um erro ao acessar o banco de dados. Tente novamente.",
+                    "Erro",
+                    JOptionPane.ERROR_MESSAGE);
+            
+            return;
         }
 
         for (int i = 0; i < personList.size(); i++) {
-            String r = personList.get(i).getName() + " | " + personList.get(i).getCPF()
-                    + " | " + personList.get(i).getPhone();
-            dlm.add(i, r);
+            Object[] rowData = {
+                personList.get(i).getName(),
+                personList.get(i).getCPF(),
+                personList.get(i).getPhone()
+            };
+            
+            dtm.addRow(rowData);
         }
-        listPeople.setModel(dlm);
     }
 
     /**
@@ -346,9 +376,9 @@ public class MainWindow extends javax.swing.JFrame implements FocusListener {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel labelIcon1;
-    private javax.swing.JList<String> listPeople;
+    private javax.swing.JTable tablePeople;
     private javax.swing.JTextField textFieldSearch;
     // End of variables declaration//GEN-END:variables
 
