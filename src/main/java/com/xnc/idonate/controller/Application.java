@@ -51,8 +51,8 @@ public class Application {
                 Credentials.DatabaseUser, Credentials.DatabasePassword, Credentials.DatabaseName);
             
             database.createDefaultDatabase();
-            //LoginWindow.main(arguments);
-            MainWindow.main(arguments, "einstein");
+            LoginWindow.main(arguments);
+            //MainWindow.main(arguments, "einstein");
         } catch (Exception e) {
             e.printStackTrace();
         }
